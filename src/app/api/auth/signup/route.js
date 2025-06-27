@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import { writeFile } from 'fs/promises';
 import path from 'path';
 import { passwordRegex } from '@/constants';
+import { NextResponse } from 'next/server';
 
 export const config = {
   api: {
@@ -19,28 +20,23 @@ export async function POST(req) {
     const lastName = formData.get('lastName');
     const email = formData.get('email');
     const password = formData.get('password');
-    const confirmPassword = formData.get('confirmPassword');
     const file = formData.get('profileImage');
 
     if (!passwordRegex.test(password)) {
-      return new Response(
-        JSON.stringify({
+      return NextResponse.json(
+        {
           message:
             'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.',
-        }),
+        },
         { status: 400 }
       );
     }
     if (!firstName || !lastName || !email || !password || !file) {
-      return new Response(JSON.stringify({ message: 'All fields required' }), {
-        status: 400,
-      });
-    }
-
-    if (password !== confirmPassword) {
-      return new Response(
-        JSON.stringify({ message: 'Passwords do not match' }),
-        { status: 400 }
+      return NextResponse.json(
+        { message: 'All fields required' },
+        {
+          status: 400,
+        }
       );
     }
 
@@ -48,21 +44,24 @@ export async function POST(req) {
 
     const existing = await User.findOne({ email });
     if (existing) {
-      return new Response(JSON.stringify({ message: 'Email already exists' }), {
-        status: 409,
-      });
+      return NextResponse.json(
+        { message: 'Email already exists' },
+        {
+          status: 409,
+        }
+      );
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
     if (buffer.length > 1 * 1024 * 1024) {
-      return new Response(
-        JSON.stringify({ message: 'File too large (max 1MB)' }),
+      return NextResponse.json(
+        { message: 'File too large (max 1MB)' },
         { status: 400 }
       );
     }
 
     const uploadDir = path.join(process.cwd(), '/public/uploads');
-    const filename = `${Date.now()}-${file.name}`;
+    const filename = `${email}-${file.name}`;
     const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, buffer);
 
@@ -76,13 +75,19 @@ export async function POST(req) {
       profileImage: `/uploads/${filename}`,
     });
 
-    return new Response(JSON.stringify({ message: 'User created', user }), {
-      status: 201,
-    });
+    return NextResponse.json(
+      { message: 'User created', user },
+      {
+        status: 201,
+      }
+    );
   } catch (error) {
     console.error('Signup error:', error);
-    return new Response(JSON.stringify({ message: 'Server error' }), {
-      status: 500,
-    });
+    return NextResponse.json(
+      { message: 'Server error' },
+      {
+        status: 500,
+      }
+    );
   }
 }

@@ -11,7 +11,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang='en'>
-      <body className={`${inter.className} antialiased`}>{children}</body>
+      <body className={`${inter.className} antialiased relative`}>
+        <img
+          src='/tekken.png'
+          className='fixed inset-0 h-screen w-screen object-cover'
+        />
+        {children}
+      </body>
     </html>
   );
 }

@@ -2,11 +2,12 @@
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import MainLayout from '@/layouts/MainLayout';
+import { APP_ROUTES } from '@/constants/app-routes';
 
 const Homepage = () => {
   const router = useRouter();
   const navigateToLogin = () => {
-    router.push('/login');
+    router.push(APP_ROUTES.LOGIN);
   };
   return (
     <MainLayout>
