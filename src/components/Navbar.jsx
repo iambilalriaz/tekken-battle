@@ -56,7 +56,6 @@ const Navbar = () => {
   const isAuthPage = [APP_ROUTES.LOGIN, APP_ROUTES.SIGNUP].some(
     (page) => page === pathname
   );
-  console.log('testing pathname', pathname);
 
   return (
     <nav className='fixed w-full top-0 left-0 z-50 bg-white/10 backdrop-blur-md border-b border-white/20 shadow-md px-6 py-3'>

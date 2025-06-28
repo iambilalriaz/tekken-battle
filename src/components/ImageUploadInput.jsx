@@ -62,7 +62,10 @@ const ImageUploadInput = (props) => {
             className='absolute inset-0 opacity-0 cursor-pointer'
           />
 
-          <span className='text-white text-sm'>Click or drag image here</span>
+          <span className='text-white text-sm text-center'>
+            Click or drag image here <br />
+            (Size 5MB max.)
+          </span>
         </div>
       )}
     </div>

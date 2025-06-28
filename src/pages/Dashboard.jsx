@@ -23,13 +23,16 @@ const Dashboard = () => {
       ) : (
         <p className='text-white text-xl text-center z-20 relative'>
           {loggedIn && (
-            <>
+            <divn className='grid place-items-center'>
               <p className='text-secondary text-2xl md:text-5xl font-semibold'>
                 Welcome, {user.firstName} {user?.lastName}!
               </p>
-              <p className='my-4'>Dashboard is under construction....</p>
+              <div className='flex justify-center rounded-full overflow-hidden w-24 h-24 my-4'>
+                <img src={user?.profileImage} width={100} height={100} />
+              </div>
+              <p className='mb-4'>Dashboard is under construction....</p>
               <Button onClick={onLogoutUser}>Logout</Button>
-            </>
+            </divn>
           )}
         </p>
       )}

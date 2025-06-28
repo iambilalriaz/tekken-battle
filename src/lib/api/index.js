@@ -4,7 +4,7 @@ export const registerUserAPI = async (formData) => {
   try {
     const response = await api.post('/auth/signup', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'aapplication/json',
       },
     });
     return response;
@@ -29,6 +29,18 @@ export const fetchUserProfile = async () => {
     const response = await api.get('/auth/me', {
       headers: {
         'Content-Type': 'aapplication/json',
+      },
+    });
+    return response;
+  } catch (error) {
+    throw new Error(error?.message);
+  }
+};
+export const uploadProfileImage = async (payload) => {
+  try {
+    const response = api.post('/upload-file', payload, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
       },
     });
     return response;

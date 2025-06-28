@@ -10,7 +10,7 @@ export const useAuthStatus = () => {
   const checkAuth = async () => {
     try {
       const data = await fetchUserProfile();
-      console.log('testing data', data);
+
       setAuth({
         loading: false,
         loggedIn: data.loggedIn,

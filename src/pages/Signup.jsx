@@ -4,11 +4,11 @@ import FloatingInput from '@/components/FloatingInput';
 import GlassyCard from '@/components/GlassyCard';
 import MainLayout from '@/layouts/MainLayout';
 import { useForm } from 'react-hook-form';
-import { emailRegex, passwordRegex } from '@/constants';
+import { emailRegex, MAX_FILE_SIZE, passwordRegex } from '@/constants';
 import InputError from '@/components/InputError';
 import ImageUploadInput from '@/components/ImageUploadInput';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
-import { registerUserAPI } from '@/lib/api';
+import { registerUserAPI, uploadProfileImage } from '@/lib/api';
 import Loader from '@/components/Loader';
 
 import toast from 'react-hot-toast';
@@ -34,6 +34,13 @@ const Signup = () => {
   } = useNetworkRequest({
     apiFunction: registerUserAPI,
   });
+  const {
+    loading: uploadingFile,
+    errorMessage: fileUploadError,
+    executeFunction: uploadImage,
+  } = useNetworkRequest({
+    apiFunction: uploadProfileImage,
+  });
 
   const password = watch('password');
 
@@ -43,34 +50,60 @@ const Signup = () => {
     resetField('profileImage');
   };
 
-  const onRegisterUser = async (data) => {
-    const { firstName, lastName, email, password, profileImage } = data;
+  const onUploadImage = async () => {
+    if (!watchedFile) {
+      toast.error('Profile picture is required.');
+      return null;
+    }
+
+    if (watchedFile.size > MAX_FILE_SIZE) {
+      toast.error('File size must be under 5MB.');
+      return null;
+    }
 
     const formData = new FormData();
+    formData.append('file', watchedFile);
 
-    const fields = {
-      firstName,
-      lastName,
-      email,
-      password,
-    };
+    try {
+      const { url } = await uploadImage(formData);
 
-    Object.entries(fields).forEach(([key, value]) => {
-      if (value) formData.append(key, value);
-    });
+      if (!url) {
+        toast.error('Failed to upload image');
+        return null;
+      }
 
-    if (profileImage) {
-      formData.append('profileImage', watchedFile);
+      return url;
+    } catch (err) {
+      toast.error('Image upload error');
+      return null;
     }
-    await registerUser(formData);
-    reset();
-    router.replace(APP_ROUTES.DASHBOARD);
+  };
+
+  const onRegisterUser = async (data) => {
+    const { firstName, lastName, email, password } = data;
+    try {
+      const profileImageUrl = await onUploadImage();
+      if (profileImageUrl) {
+        const userPayload = {
+          firstName,
+          lastName,
+          email,
+          password,
+          profileImageUrl,
+        };
+        await registerUser(userPayload);
+        reset();
+        router.replace(APP_ROUTES.DASHBOARD);
+      }
+    } catch (error) {
+      toast.error(error?.message);
+    }
   };
   useEffect(() => {
-    if (errorMessage) {
-      toast.error(errorMessage);
+    if (errorMessage || fileUploadError) {
+      toast.error(errorMessage || fileUploadError);
     }
-  }, [errorMessage]);
+  }, [errorMessage, fileUploadError]);
 
   const navigateToLogin = () => {
     router.push(APP_ROUTES.LOGIN);
@@ -154,26 +187,35 @@ const Signup = () => {
           removeSelectedFile={removeSelectedFile}
         />
         <InputError errorMessage={errors?.profileImage?.message} />
-        {loading ? (
+        <InputError
+          errorMessage={
+            watchedFile?.size > MAX_FILE_SIZE
+              ? 'File size must be under 5MB.'
+              : ''
+          }
+        />
+        {loading || uploadingFile ? (
           <div className='mt-8'>
             <Loader variant='secondary' />
           </div>
         ) : (
-          <Button
-            className='mt-8 mx-auto w-full md:w-1/2 flex justify-center'
-            onClick={handleSubmit(onRegisterUser)}
-          >
-            Register
-          </Button>
+          <>
+            <Button
+              className='mt-8 mx-auto w-full md:w-1/2 flex justify-center'
+              onClick={handleSubmit(onRegisterUser)}
+            >
+              Register
+            </Button>
+            <div className='text-sm md:text-base text-center mt-4'>
+              <button
+                className='underline cursor-pointer text-secondary'
+                onClick={navigateToLogin}
+              >
+                Login Instead{' '}
+              </button>
+            </div>
+          </>
         )}
-        <div className='text-sm md:text-base text-center mt-4'>
-          <button
-            className='underline cursor-pointer text-secondary'
-            onClick={navigateToLogin}
-          >
-            Login Instead{' '}
-          </button>
-        </div>
       </GlassyCard>
     </MainLayout>
   );
