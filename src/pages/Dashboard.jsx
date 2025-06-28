@@ -1,40 +1,65 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import Button from '@/components/Button';
-import Loader from '@/components/Loader';
+import Button from '@/components/common/Button';
+import Loader from '@/components/common/Loader';
 import { useAuthStatus } from '@/hooks/useAuthStatus';
 import MainLayout from '@/layouts/MainLayout';
-import { logoutUserAPI } from '@/lib/api';
-import { APP_ROUTES } from '@/constants/app-routes';
+import { useEffect } from 'react';
+import { useNetworkRequest } from '@/hooks/useNetworkRequest';
+import toast from 'react-hot-toast';
+import { fetchAllUsersAPI } from '@/lib/api';
+import { useAllUsers } from '@/store/useAllUsers';
+import { useSelectOpponentModal } from '@/store/useSelectOpponentModal';
+import SelectYourOpponent from '@/components/SelectYourOpponent';
 
 const Dashboard = () => {
-  const { loading, loggedIn, user } = useAuthStatus();
-  const router = useRouter();
-  const onLogoutUser = async () => {
-    await logoutUserAPI();
-    router.replace(APP_ROUTES.LOGIN);
+  const { loading, loggedIn } = useAuthStatus();
+  const { toggleOpponentSelectionModal } = useSelectOpponentModal();
+  const { setAllUsers } = useAllUsers();
+
+  const {
+    loading: fetchingUsers,
+    errorMessage: fetchingUsersError,
+    executeFunction: fetchAllUsers,
+  } = useNetworkRequest({ apiFunction: fetchAllUsersAPI });
+
+  const fetchAllUsersRequest = async () => {
+    const response = await fetchAllUsers();
+    setAllUsers(response);
+    toggleOpponentSelectionModal();
   };
-  console.log('testing user', user);
+
+  useEffect(() => {
+    if (fetchingUsersError) {
+      toast.error(fetchingUsersError);
+    }
+  }, [fetchingUsersError]);
   return (
     <MainLayout>
       {loading ? (
         <Loader variant='secondary' />
       ) : (
-        <div className='text-white text-xl text-center z-20 relative max-w-3/4'>
-          {loggedIn && (
-            <divn className='grid place-items-center'>
-              <p className='text-secondary text-2xl md:text-5xl font-semibold'>
-                Welcome, {user.firstName} {user?.lastName}!
-              </p>
-              <div className='flex justify-center rounded-full overflow-hidden w-24 h-24 my-4'>
-                <img src={user?.profileImageUrl} width={100} height={100} />
-              </div>
-              <p className='mb-4'>Dashboard is under construction....</p>
-              <Button onClick={onLogoutUser}>Logout</Button>
-            </divn>
-          )}
-        </div>
+        loggedIn && (
+          <div className='text-center'>
+            <p className='text-5xl md:text-7xl text-secondary font-semibold animate__animated animate__backInDown animate__delay-0.1s'>
+              Hungry to Fight?
+            </p>
+            <p className='text-2xl md:text-3xl my-4 text-white animate__animated animate__backInDown animate__fast'>
+              Create a session now!
+            </p>
+            {fetchingUsers ? (
+              <Loader />
+            ) : (
+              <Button
+                className='mt-4 animate__animated animate__backInDown animate__faster'
+                onClick={fetchAllUsersRequest}
+              >
+                Create Session
+              </Button>
+            )}
+            <SelectYourOpponent />
+          </div>
+        )
       )}
     </MainLayout>
   );

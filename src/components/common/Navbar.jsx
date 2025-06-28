@@ -6,12 +6,12 @@ import { FaChevronDown } from 'react-icons/fa';
 import { APP_ROUTES } from '@/constants/app-routes';
 import { useAuthStatus } from '@/hooks/useAuthStatus';
 import { usePathname, useRouter } from 'next/navigation';
-import Loader from '@/components/Loader';
+import Loader from '@/components/common/Loader';
 import { logoutUserAPI } from '@/lib/api';
 
 const NAVBAR_LINKS = [
   { path: APP_ROUTES.DASHBOARD, label: 'Dashboard' },
-  { path: APP_ROUTES.DASHBOARD, label: 'Session' },
+  { path: APP_ROUTES.BATTLE_REQUESTS, label: 'Battle Requests' },
   { path: APP_ROUTES.DASHBOARD, label: 'Profile' },
 ];
 
@@ -84,7 +84,7 @@ const Navbar = () => {
           )}
 
           {isOpen && (
-            <ul className='mt-3 space-y-2  text-primary absolute top-12 right-0 bg-white backdrop-blur-md border border-white/20 shadow-md pl-4 pr-8 py-3 rounded'>
+            <ul className='mt-3 space-y-2 w-60  text-primary absolute top-12 right-0 bg-white backdrop-blur-md border border-white/20 shadow-md px-4 py-3 rounded'>
               {NAVBAR_LINKS.map(({ label, path }) => (
                 <li key={label} className='hover:font-medium'>
                   <Link href={path} onClick={() => setIsOpen(false)}>

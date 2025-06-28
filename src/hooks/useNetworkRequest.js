@@ -27,5 +27,6 @@ export const useNetworkRequest = ({ apiFunction, initialData = null }) => {
     errorMessage: error,
     executeFunction,
     setErrorMessage: setError,
+    setData,
   };
 };

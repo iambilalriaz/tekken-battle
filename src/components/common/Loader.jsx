@@ -6,7 +6,7 @@ const LOADER_DIMENSIONS = {
   lg: 'w-12 h-12 p-4',
   xl: 'w-16 h-16 p-4',
 };
-const Loader = ({ variant = 'primary', size = 'sm' }) => {
+const Loader = ({ variant = 'secondary', size = 'sm' }) => {
   const borderColor =
     variant === 'primary' ? 'border-primary' : 'border-secondary';
   return (

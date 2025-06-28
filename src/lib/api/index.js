@@ -2,11 +2,7 @@ import api from '@/lib/axiosClient';
 
 export const registerUserAPI = async (formData) => {
   try {
-    const response = await api.post('/auth/signup', formData, {
-      headers: {
-        'Content-Type': 'aapplication/json',
-      },
-    });
+    const response = await api.post('/auth/signup', formData);
     return response;
   } catch (error) {
     throw new Error(error?.message);
@@ -14,11 +10,7 @@ export const registerUserAPI = async (formData) => {
 };
 export const loginUserAPI = async (payload) => {
   try {
-    const response = await api.post('/auth/login', payload, {
-      headers: {
-        'Content-Type': 'aapplication/json',
-      },
-    });
+    const response = await api.post('/auth/login', payload);
     return response;
   } catch (error) {
     throw new Error(error?.message);
@@ -26,11 +18,7 @@ export const loginUserAPI = async (payload) => {
 };
 export const fetchUserProfile = async () => {
   try {
-    const response = await api.get('/auth/me', {
-      headers: {
-        'Content-Type': 'aapplication/json',
-      },
-    });
+    const response = await api.get('/auth/me');
     return response;
   } catch (error) {
     throw new Error(error?.message);
@@ -50,12 +38,16 @@ export const uploadProfileImage = async (payload) => {
 };
 export const logoutUserAPI = async () => {
   try {
-    const response = await api.post('/auth/logout', {
-      headers: {
-        'Content-Type': 'aapplication/json',
-      },
-    });
+    const response = await api.post('/auth/logout');
     return response;
+  } catch (error) {
+    throw new Error(error?.message);
+  }
+};
+export const fetchAllUsersAPI = async () => {
+  try {
+    const response = await api.get('/user/all');
+    return response?.data;
   } catch (error) {
     throw new Error(error?.message);
   }

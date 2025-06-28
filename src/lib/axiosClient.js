@@ -8,11 +8,16 @@ const axiosClient = axios.create({
   withCredentials: true, // Optional: set based on your auth requirements
 });
 
-// Optional: Add interceptors
-// axiosClient.interceptors.request.use(config => {
-//   // Add auth token here if needed
-//   return config;
-// });
+// axiosClient.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response?.status === 401) {
+//       // e.g., redirect to login or show toast
+//       window.location.href = '/login';
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 const api = {
   get: async (url, config = {}) => {

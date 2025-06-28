@@ -1,14 +1,14 @@
 'use client';
-import Button from '@/components/Button';
-import FloatingInput from '@/components/FloatingInput';
-import GlassyCard from '@/components/GlassyCard';
+import Button from '@/components/common/Button';
+import FloatingInput from '@/components/common/FloatingInput';
+import GlassyCard from '@/components/common/GlassyCard';
 import MainLayout from '@/layouts/MainLayout';
 import { useRouter } from 'next/navigation';
 import { APP_ROUTES } from '@/constants/app-routes';
 import { useForm } from 'react-hook-form';
 import { emailRegex } from '@/constants';
-import InputError from '@/components/InputError';
-import Loader from '@/components/Loader';
+import InputError from '@/components/common/InputError';
+import Loader from '@/components/common/Loader';
 import { loginUserAPI } from '@/lib/api';
 import { useEffect } from 'react';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
@@ -50,7 +50,7 @@ const Login = () => {
 
   return (
     <MainLayout>
-      <GlassyCard title='Login' styles='w-full md:w-1/2'>
+      <GlassyCard title='Login'>
         <FloatingInput
           classes='mt-6'
           label='Email'

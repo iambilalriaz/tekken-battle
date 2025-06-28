@@ -1,15 +1,15 @@
 'use client';
-import Button from '@/components/Button';
-import FloatingInput from '@/components/FloatingInput';
-import GlassyCard from '@/components/GlassyCard';
+import Button from '@/components/common/Button';
+import FloatingInput from '@/components/common/FloatingInput';
+import GlassyCard from '@/components/common/GlassyCard';
 import MainLayout from '@/layouts/MainLayout';
 import { useForm } from 'react-hook-form';
 import { emailRegex, MAX_FILE_SIZE, passwordRegex } from '@/constants';
-import InputError from '@/components/InputError';
+import InputError from '@/components/common/InputError';
 import ImageUploadInput from '@/components/ImageUploadInput';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
 import { registerUserAPI, uploadProfileImage } from '@/lib/api';
-import Loader from '@/components/Loader';
+import Loader from '@/components/common/Loader';
 
 import toast from 'react-hot-toast';
 import { useEffect } from 'react';
@@ -110,7 +110,7 @@ const Signup = () => {
   };
   return (
     <MainLayout>
-      <GlassyCard title='Register User' styles='w-full md:w-1/2'>
+      <GlassyCard title='Register User'>
         <FloatingInput
           classes='mt-3'
           name='firstName'
