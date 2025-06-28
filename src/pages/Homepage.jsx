@@ -16,7 +16,7 @@ const Homepage = () => {
           Tekken Battle
         </p>
         <p className='text-3xl my-4 text-white animate__animated animate__backInDown animate__fast'>
-          Let's Fight! 👊🏻
+          Let's Fight! 🤼‍♂️
         </p>
         <Button
           className='mt-4 animate__animated animate__backInDown animate__faster'

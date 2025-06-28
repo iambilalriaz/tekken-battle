@@ -5,6 +5,8 @@ import { writeFile } from 'fs/promises';
 import path from 'path';
 import { passwordRegex } from '@/constants';
 import { NextResponse } from 'next/server';
+import { loginUser } from '@/lib/auth/loginUser';
+import { cookies } from 'next/headers';
 
 export const config = {
   api: {
@@ -22,21 +24,22 @@ export async function POST(req) {
     const password = formData.get('password');
     const file = formData.get('profileImage');
 
-    if (!passwordRegex.test(password)) {
+    if (!firstName || !lastName || !email || !password || !file) {
       return NextResponse.json(
-        {
-          message:
-            'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.',
-        },
+        { success: false, data: null, error: 'All fields are required' },
         { status: 400 }
       );
     }
-    if (!firstName || !lastName || !email || !password || !file) {
+
+    if (!passwordRegex.test(password)) {
       return NextResponse.json(
-        { message: 'All fields required' },
         {
-          status: 400,
-        }
+          success: false,
+          data: null,
+          error:
+            'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.',
+        },
+        { status: 400 }
       );
     }
 
@@ -45,17 +48,15 @@ export async function POST(req) {
     const existing = await User.findOne({ email });
     if (existing) {
       return NextResponse.json(
-        { message: 'Email already exists' },
-        {
-          status: 409,
-        }
+        { success: false, data: null, error: 'Email already exists' },
+        { status: 409 }
       );
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
     if (buffer.length > 1 * 1024 * 1024) {
       return NextResponse.json(
-        { message: 'File too large (max 1MB)' },
+        { success: false, data: null, error: 'File too large (max 1MB)' },
         { status: 400 }
       );
     }
@@ -73,21 +74,47 @@ export async function POST(req) {
       email,
       password: hashedPassword,
       profileImage: `/uploads/${filename}`,
+
+      gamesWon: 0,
+      cleanSweaps: 0,
+      perfects: 0,
     });
 
+    // ✅ Automatically login the user using loginUser helper
+    const { accessToken } = await loginUser(email, password);
+    cookies().set('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+    });
     return NextResponse.json(
-      { message: 'User created', user },
       {
-        status: 201,
-      }
+        success: true,
+        data: {
+          message: 'User created and logged in successfully',
+          accessToken,
+          user: {
+            id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            profileImage: user.profileImage,
+          },
+        },
+        error: '',
+      },
+      { status: 201 }
     );
   } catch (error) {
     console.error('Signup error:', error);
     return NextResponse.json(
-      { message: 'Server error' },
       {
-        status: 500,
-      }
+        success: false,
+        data: null,
+        error: error.message || 'Internal Server Error',
+      },
+      { status: 500 }
     );
   }
 }

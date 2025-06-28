@@ -6,17 +6,34 @@ import MainLayout from '@/layouts/MainLayout';
 import { useForm } from 'react-hook-form';
 import { emailRegex, passwordRegex } from '@/constants';
 import InputError from '@/components/InputError';
-import api from '@/lib/axiosClient';
 import ImageUploadInput from '@/components/ImageUploadInput';
+import { useNetworkRequest } from '@/hooks/useNetworkRequest';
+import { registerUserAPI } from '@/lib/api';
+import Loader from '@/components/Loader';
+
+import toast from 'react-hot-toast';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { APP_ROUTES } from '@/constants/app-routes';
 
 const Signup = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     watch,
     resetField,
+    reset,
     formState: { errors },
   } = useForm();
+
+  const {
+    loading,
+    errorMessage,
+    executeFunction: registerUser,
+  } = useNetworkRequest({
+    apiFunction: registerUserAPI,
+  });
 
   const password = watch('password');
 
@@ -45,19 +62,24 @@ const Signup = () => {
     if (profileImage) {
       formData.append('profileImage', watchedFile);
     }
-
-    const response = await api.post('/auth/signup', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    await registerUser(formData);
+    reset();
+    router.replace(APP_ROUTES.DASHBOARD);
   };
+  useEffect(() => {
+    if (errorMessage) {
+      toast.error(errorMessage);
+    }
+  }, [errorMessage]);
 
+  const navigateToLogin = () => {
+    router.push(APP_ROUTES.LOGIN);
+  };
   return (
     <MainLayout>
-      <GlassyCard title='Signup' styles='w-full md:w-1/2'>
+      <GlassyCard title='Register User' styles='w-full md:w-1/2'>
         <FloatingInput
-          inputClass='mt-3'
+          classes='mt-3'
           name='firstName'
           label='First Name'
           {...register('firstName', {
@@ -70,7 +92,7 @@ const Signup = () => {
         />
         <InputError errorMessage={errors?.firstName?.message} />
         <FloatingInput
-          inputClass='mt-3'
+          classes='mt-3'
           name='lastName'
           label='Last Name'
           {...register('lastName', {
@@ -83,7 +105,7 @@ const Signup = () => {
         />{' '}
         <InputError errorMessage={errors?.lastName?.message} />
         <FloatingInput
-          inputClass='mt-3'
+          classes='mt-3'
           name='email'
           label='Email'
           type='email'
@@ -97,7 +119,7 @@ const Signup = () => {
         />
         <InputError errorMessage={errors?.email?.message} />
         <FloatingInput
-          inputClass='mt-3'
+          classes='mt-3'
           name='password'
           label='Password'
           type='password'
@@ -105,13 +127,13 @@ const Signup = () => {
             required: 'Password is required',
             pattern: {
               value: passwordRegex,
-              message: 'Must be 8+ chars, A-Z, 0-9, special',
+              message: 'Min 8 characters, A-Z, 0-9, special',
             },
           })}
         />{' '}
         <InputError errorMessage={errors?.password?.message} />
         <FloatingInput
-          inputClass='mt-3'
+          classes='mt-3'
           label='Confirm Password'
           type='password'
           name='confirmPassword'
@@ -124,7 +146,7 @@ const Signup = () => {
         <ImageUploadInput
           name='profileImage'
           label='Profile Picture'
-          inputClass='mt-3'
+          classes='mt-3'
           {...register('profileImage', {
             required: 'Profile picture is required',
           })}
@@ -132,12 +154,26 @@ const Signup = () => {
           removeSelectedFile={removeSelectedFile}
         />
         <InputError errorMessage={errors?.profileImage?.message} />
-        <Button
-          className='mt-4 mx-auto w-full md:w-1/2 flex justify-center'
-          onClick={handleSubmit(onRegisterUser)}
-        >
-          Signup
-        </Button>
+        {loading ? (
+          <div className='mt-8'>
+            <Loader variant='secondary' />
+          </div>
+        ) : (
+          <Button
+            className='mt-8 mx-auto w-full md:w-1/2 flex justify-center'
+            onClick={handleSubmit(onRegisterUser)}
+          >
+            Register
+          </Button>
+        )}
+        <div className='text-sm md:text-base text-center mt-4'>
+          <button
+            className='underline cursor-pointer text-secondary'
+            onClick={navigateToLogin}
+          >
+            Login Instead{' '}
+          </button>
+        </div>
       </GlassyCard>
     </MainLayout>
   );

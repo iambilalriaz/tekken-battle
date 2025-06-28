@@ -55,7 +55,7 @@ const api = {
 function handleError(error) {
   if (error.response) {
     console.error('API Error:', error.response.data);
-    throw new Error(error.response.data?.message || 'API Error');
+    throw new Error(error.response.data?.error || 'API Error');
   } else if (error.request) {
     console.error('No response received from API:', error.request);
     throw new Error('No response from server.');

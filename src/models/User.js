@@ -7,6 +7,10 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, unique: true },
     password: String,
     profileImage: String,
+
+    gamesWon: Number,
+    cleanSweaps: Number,
+    perfects: Number,
   },
   { timestamps: true }
 );

@@ -5,19 +5,19 @@ import clsx from 'clsx';
 import { LuEye, LuEyeOff } from 'react-icons/lu';
 
 const FloatingInput = (props) => {
-  const { inputClass = '', label = '', type = 'text', name = '' } = props;
+  const { classes = '', label = '', type = 'text', name = '' } = props;
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
   const inputType = isPassword && !showPassword ? 'password' : 'text';
 
   return (
-    <div className={clsx('relative w-full', inputClass)}>
+    <div className={clsx('relative w-full', classes)}>
       <input
         {...props}
         type={inputType}
         id={label.toLowerCase().replace(/\s+/g, '-')}
         className={clsx(
-          'input input-bordered w-full peer pt-6 pb-2 placeholder-transparent text-white pl-3 pr-10 border-white border',
+          'input input-bordered w-full peer pt-6 pb-1 placeholder-transparent text-white pl-3 pr-10 border-white border',
           'focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary'
         )}
         placeholder={label}
@@ -26,9 +26,9 @@ const FloatingInput = (props) => {
       <label
         htmlFor={label.toLowerCase().replace(/\s+/g, '-')}
         className={clsx(
-          'absolute left-3 top-2 text-gray  transition-all',
-          'peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray',
-          'peer-focus:top-2 peer-focus:text-secondary'
+          'absolute left-3 top-2 text-gray  transition-all text-sm',
+          'peer-placeholder-shown:top-4 peer-focus:text-xs peer-placeholder-shown:text-gray',
+          'peer-focus:top-1 peer-focus:text-secondary'
         )}
       >
         {label}

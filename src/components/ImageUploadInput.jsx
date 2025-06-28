@@ -6,7 +6,7 @@ import { MdCancel } from 'react-icons/md';
 const ImageUploadInput = (props) => {
   const {
     label = 'Upload Image',
-    inputClass = '',
+    classes = '',
     watchedFile,
     removeSelectedFile,
   } = props;
@@ -20,6 +20,8 @@ const ImageUploadInput = (props) => {
       setPreview(objectUrl);
 
       return () => URL.revokeObjectURL(objectUrl); // Cleanup on unmount
+    } else {
+      setPreview(null);
     }
   }, [file]);
 
@@ -29,7 +31,7 @@ const ImageUploadInput = (props) => {
   };
 
   return (
-    <div className={`w-full ${inputClass}`}>
+    <div className={`w-full ${classes}`}>
       <label className='block mb-2 text-sm font-medium text-white'>
         {label}
       </label>
