@@ -15,26 +15,26 @@ const Dashboard = () => {
     await logoutUserAPI();
     router.replace(APP_ROUTES.LOGIN);
   };
-
+  console.log('testing user', user);
   return (
     <MainLayout>
       {loading ? (
         <Loader variant='secondary' />
       ) : (
-        <p className='text-white text-xl text-center z-20 relative'>
+        <div className='text-white text-xl text-center z-20 relative max-w-3/4'>
           {loggedIn && (
             <divn className='grid place-items-center'>
               <p className='text-secondary text-2xl md:text-5xl font-semibold'>
                 Welcome, {user.firstName} {user?.lastName}!
               </p>
               <div className='flex justify-center rounded-full overflow-hidden w-24 h-24 my-4'>
-                <img src={user?.profileImage} width={100} height={100} />
+                <img src={user?.profileImageUrl} width={100} height={100} />
               </div>
               <p className='mb-4'>Dashboard is under construction....</p>
               <Button onClick={onLogoutUser}>Logout</Button>
             </divn>
           )}
-        </p>
+        </div>
       )}
     </MainLayout>
   );

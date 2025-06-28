@@ -31,7 +31,7 @@ export async function POST(req) {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
-            profileImage: user.profileImage,
+            profileImageUrl: user.profileImageUrl,
           },
         },
         error: '',

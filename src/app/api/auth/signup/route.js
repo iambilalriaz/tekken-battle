@@ -48,7 +48,7 @@ export async function POST(req) {
       lastName,
       email,
       password: hashedPassword,
-      profileImage: profileImageUrl,
+      profileImageUrl,
 
       gamesWon: 0,
       cleanSweaps: 0,
@@ -74,7 +74,7 @@ export async function POST(req) {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
-            profileImage: user.profileImage,
+            profileImageUrl: user.profileImageUrl,
           },
         },
         error: '',
