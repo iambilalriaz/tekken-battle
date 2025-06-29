@@ -1,3 +1,4 @@
+// models/BattleRequest.js
 import mongoose from 'mongoose';
 
 const BattleRequestSchema = new mongoose.Schema({
@@ -13,16 +14,16 @@ const BattleRequestSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'accepted', 'cancelled'],
-    default: 'pending',
+    enum: ['requested', 'in-match', 'rejected'],
+    default: 'requested',
   },
+  matches: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Match' }],
   createdAt: { type: Date, default: Date.now },
   acceptedAt: { type: Date },
   expiresAt: {
     type: Date,
-    required: true,
-    default: () => new Date(Date.now() + 30 * 60 * 1000), // 30 mins
-    index: { expires: 0 }, // TTL index (MongoDB auto-deletes expired docs)
+    default: null,
+    index: { expireAfterSeconds: 0 }, // TTL works only if expiresAt is set
   },
 });
 

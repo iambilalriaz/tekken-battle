@@ -1,5 +1,9 @@
 import api from '@/lib/axiosClient';
 
+const headers = {
+  'Content-Type': 'application/json',
+};
+
 export const registerUserAPI = async (formData) => {
   try {
     const response = await api.post('/auth/signup', formData);
@@ -47,6 +51,50 @@ export const logoutUserAPI = async () => {
 export const fetchAllUsersAPI = async () => {
   try {
     const response = await api.get('/user/all');
+    return response?.data;
+  } catch (error) {
+    throw new Error(error?.message);
+  }
+};
+export const fetchYourBattleRequestsAPI = async () => {
+  try {
+    const response = await api.get('/battle-request/list');
+    return response?.data;
+  } catch (error) {
+    throw new Error(error?.message);
+  }
+};
+export const respondToBattleRequestAPI = async (payload) => {
+  try {
+    const response = await api.patch('/battle-request/respond', payload);
+    return response?.data;
+  } catch (error) {
+    throw new Error(error?.message);
+  }
+};
+export const getBattleDetailsAPI = async (battleId) => {
+  try {
+    const response = await api.get(`/battle-request/${battleId}`);
+
+    return response?.data;
+  } catch (error) {
+    throw new Error(error?.message);
+  }
+};
+export const addNewMatchAPI = async (battleId, payload) => {
+  try {
+    const response = await api.post(
+      `/battle-request/${battleId}/match/add`,
+      payload
+    );
+    return response?.data;
+  } catch (error) {
+    throw new Error(error?.message);
+  }
+};
+export const fetchBattleMatchesAPI = async (battleId) => {
+  try {
+    const response = await api.get(`/battle-request/${battleId}/match`);
     return response?.data;
   } catch (error) {
     throw new Error(error?.message);

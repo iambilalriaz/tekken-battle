@@ -1,7 +1,6 @@
-// models/Match.js
 import mongoose from 'mongoose';
 
-export const MatchSchema = new mongoose.Schema(
+const MatchSchema = new mongoose.Schema(
   {
     player1: {
       type: mongoose.Schema.Types.ObjectId,
@@ -26,7 +25,14 @@ export const MatchSchema = new mongoose.Schema(
     player1Perfects: { type: Number, default: 0 },
     player2Perfects: { type: Number, default: 0 },
     cleanSweep: { type: Boolean, default: false },
+    battleRequestId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'BattleRequest',
+      required: true,
+    },
     createdAt: { type: Date, default: Date.now },
   },
-  { _id: false }
+  { timestamps: true }
 );
+
+export default mongoose.models.Match || mongoose.model('Match', MatchSchema);

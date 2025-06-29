@@ -38,7 +38,6 @@ export async function POST(req) {
   }
 
   const body = await req.json();
-  const socketId = req.headers.get('x-pusher-socket-id');
 
   const {
     userId: requesterId,
@@ -55,11 +54,16 @@ export async function POST(req) {
       { status: 400 }
     );
   }
+  const acceptor = await User.findOne({
+    _id: acceptorId,
+  }).select('firstName lastName profileImageUrl');
 
   const existingRequest = await BattleRequest.findOne({
-    'requester.id': requesterId,
-    'acceptor.id': acceptorId,
-    status: 'pending',
+    status: 'requested',
+    $or: [
+      { 'requester.id': requesterId, 'acceptor.id': acceptorId },
+      { 'requester.id': acceptorId, 'acceptor.id': requesterId },
+    ],
   });
 
   if (existingRequest) {
@@ -67,7 +71,7 @@ export async function POST(req) {
       {
         success: false,
         data: null,
-        error: 'You already have a pending battle request.',
+        error: `Battle request already pending with ${acceptor?.firstName}.`,
       },
       { status: 400 }
     );
@@ -75,10 +79,6 @@ export async function POST(req) {
 
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
 
-  const acceptor = await User.findOne({
-    _id: acceptorId,
-  }).select('firstName lastName profileImageUrl');
-  console.log(acceptor);
   const battleRequest = await BattleRequest.create({
     requester: {
       id: requesterId,
@@ -90,7 +90,7 @@ export async function POST(req) {
       name: `${acceptor?.firstName} ${acceptor?.lastName}`,
       profileImage: acceptor?.profileImageUrl,
     },
-    status: 'pending',
+    status: 'requested',
     expiresAt,
   });
 
@@ -98,7 +98,7 @@ export async function POST(req) {
     `private-user-${acceptorId}`, // target only the acceptor
     'battle-request-received',
     {
-      id: battleRequest._id,
+      _id: battleRequest._id,
       requester: battleRequest.requester,
       acceptor: battleRequest.acceptor,
       status: battleRequest.status,

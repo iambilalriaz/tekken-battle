@@ -20,8 +20,8 @@ export async function POST(req) {
   const socketId = params.get('socket_id');
   const channelName = params.get('channel_name');
 
-  const token = await cookies()?.get('accessToken')?.value;
-
+  const cookiesData = await cookies();
+  const token = cookiesData?.get('accessToken')?.value;
   if (!token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

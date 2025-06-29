@@ -46,6 +46,14 @@ const api = {
       handleError(error);
     }
   },
+  patch: async (url, data = {}, config = {}) => {
+    try {
+      const response = await axiosClient.patch(url, data, config);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
 
   delete: async (url, config = {}) => {
     try {

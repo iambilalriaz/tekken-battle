@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '@/components/common/Button';
+import OutlineButton from '@/components/common/OutlineButton';
 import Loader from '@/components/common/Loader';
 import { useAuthStatus } from '@/hooks/useAuthStatus';
 import MainLayout from '@/layouts/MainLayout';
@@ -50,12 +50,12 @@ const Dashboard = () => {
             {fetchingUsers ? (
               <Loader />
             ) : (
-              <Button
+              <OutlineButton
                 className='mt-4 animate__animated animate__backInDown animate__faster'
                 onClick={fetchAllUsersRequest}
               >
                 Create Session
-              </Button>
+              </OutlineButton>
             )}
             <SelectYourOpponent />
           </div>

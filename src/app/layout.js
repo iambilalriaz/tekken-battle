@@ -13,11 +13,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang='en'>
       <body className={`${inter.className} antialiased relative`}>
-        <img
-          src='/tekken.png'
-          className='fixed inset-0 h-screen w-screen object-cover'
-        />
-        {children}
+        <div
+          className='fixed inset-0 h-screen w-screen bg-cover bg-center'
+          style={{ backgroundImage: "url('/tekken.png')" }}
+        >
+          {children}
+        </div>
+
         <Toaster />
       </body>
     </html>

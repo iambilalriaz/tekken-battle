@@ -3,4 +3,5 @@ export const APP_ROUTES = {
   LOGIN: '/login',
   DASHBOARD: '/dashboard',
   BATTLE_REQUESTS: '/battle-requests',
+  BATTLE: '/battle/:battleId',
 };

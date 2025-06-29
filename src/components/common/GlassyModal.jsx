@@ -2,7 +2,13 @@
 
 import { useEffect } from 'react';
 
-export default function GlassyModal({ title = '', isOpen, onClose, children }) {
+export default function GlassyModal({
+  title = '',
+  isOpen,
+  onClose,
+  children,
+  styles = 'w-full lg:w-1/2',
+}) {
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === 'Escape') onClose();
@@ -19,7 +25,7 @@ export default function GlassyModal({ title = '', isOpen, onClose, children }) {
       onClick={onClose}
     >
       <div
-        className='bg-white/10 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/20 text-white w-full max-w-md transition-all duration-300 scale-100'
+        className='bg-white/10 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/20 text-white transition-all duration-300 scale-100'
         onClick={(e) => e.stopPropagation()}
       >
         <div className='flex justify-between items-center mb-4'>

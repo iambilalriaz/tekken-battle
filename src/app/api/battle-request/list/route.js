@@ -4,13 +4,13 @@ import dbConnect from '@/lib/mongoose';
 import BattleRequest from '@/models/BattleRequest';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET; // Ensure this is defined in your .env
+const JWT_SECRET = process.env.JWT_ACCESS_SECRET; // Ensure this is defined in your .env
 
 export async function GET() {
   await dbConnect();
 
-  const cookieStore = cookies();
-  const token = cookieStore.get('token')?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore?.get('accessToken')?.value;
 
   if (!token) {
     return NextResponse.json(
@@ -33,10 +33,7 @@ export async function GET() {
 
   try {
     const battleRequests = await BattleRequest.find({
-      $or: [
-        { 'requester.id': playerId },
-        { 'receiver.id': playerId }, // Include this if your schema supports it
-      ],
+      $or: [{ 'requester.id': playerId }, { 'acceptor.id': playerId }],
     }).sort({ createdAt: -1 });
 
     return NextResponse.json(

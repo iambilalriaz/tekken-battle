@@ -1,33 +1,49 @@
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { APP_ROUTES } from '@/constants/app-routes';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
 import { sendBattleRequestAPI } from '@/lib/pusher';
 import { useAllUsers } from '@/store/useAllUsers';
-import { useBattleRequests } from '@/store/useBattleRequests';
 import { useSelectOpponentModal } from '@/store/useSelectOpponentModal';
 import GlassyModal from '@/components/common/GlassyModal';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import Loader from '@/components/common/Loader';
+import { fetchYourBattleRequestsAPI } from '../lib/api';
+import { useBattleRequests } from '../store/useBattleRequests';
 
 const SelectYourOpponent = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const { showOpponentSelectionModal, toggleOpponentSelectionModal } =
     useSelectOpponentModal();
 
+  const { setBattleRequests } = useBattleRequests();
+
   const { allUsers } = useAllUsers();
-  const { concatBattleRequest } = useBattleRequests();
 
   const {
     loading: sendingRequest,
     errorMessage: sendingRequestError,
     executeFunction: sendBattleRequest,
   } = useNetworkRequest({ apiFunction: sendBattleRequestAPI });
+
+  const {
+    loading: fetchingBattleRequests,
+    executeFunction: fetchBattleRequests,
+  } = useNetworkRequest({
+    apiFunction: fetchYourBattleRequestsAPI,
+  });
+
   const createBattleRequest = async (acceptorId) => {
-    const response = await sendBattleRequest({
+    await sendBattleRequest({
       acceptorId,
     });
-    concatBattleRequest(response?.data);
+    if (pathname === APP_ROUTES.BATTLE_REQUESTS) {
+      const requests = await fetchBattleRequests();
+      setBattleRequests(requests);
+    }
+    toggleOpponentSelectionModal();
+
     router.push(APP_ROUTES.BATTLE_REQUESTS);
   };
 
@@ -42,7 +58,7 @@ const SelectYourOpponent = () => {
       onClose={toggleOpponentSelectionModal}
       title='Select Your Opponent'
     >
-      {sendingRequest ? (
+      {sendingRequest || fetchingBattleRequests ? (
         <div className='p-12'>
           <p className='mb-4'>Creating session...</p>
           <Loader />

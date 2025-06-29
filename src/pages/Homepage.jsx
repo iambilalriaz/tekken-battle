@@ -1,13 +1,13 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/common/Button';
+import OutlineButton from '@/components/common/OutlineButton';
 import MainLayout from '@/layouts/MainLayout';
 import { APP_ROUTES } from '@/constants/app-routes';
 
 const Homepage = () => {
   const router = useRouter();
-  const navigateToLogin = () => {
-    router.push(APP_ROUTES.LOGIN);
+  const navigateToDashoard = () => {
+    router.push(APP_ROUTES.DASHBOARD);
   };
   return (
     <MainLayout>
@@ -18,12 +18,12 @@ const Homepage = () => {
         <p className='text-2xl md:text-3xl my-4 text-white animate__animated animate__backInDown animate__fast'>
           Let's Fight! 🤼‍♂️
         </p>
-        <Button
+        <OutlineButton
           className='mt-4 animate__animated animate__backInDown animate__faster'
-          onClick={navigateToLogin}
+          onClick={navigateToDashoard}
         >
-          Login
-        </Button>
+          Fight
+        </OutlineButton>
       </div>
     </MainLayout>
   );
