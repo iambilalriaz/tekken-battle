@@ -7,13 +7,14 @@ import { useEffect, useState } from 'react';
 import MatchForm from '../components/MatchForm';
 import { useNetworkRequest } from '../hooks/useNetworkRequest';
 import { fetchBattleMatchesAPI, getBattleDetailsAPI } from '../lib/api';
-import { useParams } from 'next/navigation';
 import { useBattle } from '../store/useBattle';
 import Loader from '../components/common/Loader';
 import { useBattleMatches } from '../store/useBattleMatches';
+import { useParams } from 'next/navigation';
 
 const Battle = () => {
-  const { battleId } = useParams();
+  const params = useParams();
+  const battleId = params?.battleId;
   const { setBattle } = useBattle();
   const { setBattleMatches } = useBattleMatches();
   const [showAddMatchForm, setShowAddMatchForm] = useState(false);
@@ -44,7 +45,9 @@ const Battle = () => {
     await fetchBattleMatches();
   };
   useEffect(() => {
-    fetchBattleDetails();
+    if (battleId) {
+      fetchBattleDetails();
+    }
   }, [battleId]);
   return (
     <MainLayout>
