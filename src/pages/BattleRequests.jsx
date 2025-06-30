@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 
 import { useBattleRequests } from '@/store/useBattleRequests';
 import GlassyCard from '@/components/common/GlassyCard';
-import { useAuthStatus } from '@/hooks/useAuthStatus';
+import { useLoggedInUser } from '@/hooks/useLoggedInUser';
 import { useNetworkRequest } from '../hooks/useNetworkRequest';
 import { fetchAllUsersAPI, fetchYourBattleRequestsAPI } from '../lib/api';
 import Loader from '../components/common/Loader';
@@ -21,7 +21,7 @@ import { APP_ROUTES } from '../constants/app-routes';
 import { useRouter } from 'next/navigation';
 
 const BattleRequests = () => {
-  const { user } = useAuthStatus();
+  const { loggedInUser } = useLoggedInUser();
   const router = useRouter();
   const { battleRequests, concatBattleRequest, setBattleRequests } =
     useBattleRequests();
@@ -64,7 +64,7 @@ const BattleRequests = () => {
       },
     });
 
-    const channel = pusher.subscribe(`private-user-${user?.userId}`);
+    const channel = pusher.subscribe(`private-user-${loggedInUser?.id}`);
     channel.bind('battle-request-received', (response) => {
       concatBattleRequest(response);
     });
@@ -88,7 +88,7 @@ const BattleRequests = () => {
       channel.unsubscribe();
       pusher.disconnect();
     };
-  }, [user?.userId, JSON.stringify(battleRequests)]);
+  }, [loggedInUser?.id, JSON.stringify(battleRequests)]);
 
   const fetchYourBattleRequests = async () => {
     const requests = await fetchBattleRequests();

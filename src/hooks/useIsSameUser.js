@@ -1,7 +1,7 @@
-import { useAuthStatus } from '@/hooks/useAuthStatus';
+import { useLoggedInUser } from '@/hooks/useLoggedInUser';
 
 export const useIsSameUser = () => {
-  const { user } = useAuthStatus();
-  const isSameUser = (userId) => userId === user?.userId;
+  const { loggedInUser } = useLoggedInUser();
+  const isSameUser = (userId) => userId === loggedInUser?.id;
   return { isSameUser };
 };

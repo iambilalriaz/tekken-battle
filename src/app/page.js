@@ -1,4 +1,4 @@
-import Homepage from '@/pages/Homepage';
+import Dashboard from '@/pages/Dashboard';
 export default function Home() {
-  return <Homepage />;
+  return <Dashboard />;
 }

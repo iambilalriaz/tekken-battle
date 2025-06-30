@@ -1,13 +1,9 @@
 import api from '@/lib/axiosClient';
 
-const headers = {
-  'Content-Type': 'application/json',
-};
-
 export const registerUserAPI = async (formData) => {
   try {
     const response = await api.post('/auth/signup', formData);
-    return response;
+    return response?.data;
   } catch (error) {
     throw new Error(error?.message);
   }
@@ -15,7 +11,7 @@ export const registerUserAPI = async (formData) => {
 export const loginUserAPI = async (payload) => {
   try {
     const response = await api.post('/auth/login', payload);
-    return response;
+    return response?.data;
   } catch (error) {
     throw new Error(error?.message);
   }
@@ -94,7 +90,7 @@ export const addNewMatchAPI = async (battleId, payload) => {
 };
 export const fetchBattleMatchesAPI = async (battleId) => {
   try {
-    const response = await api.get(`/battle-request/${battleId}/match`);
+    const response = await api.get(`/battle-request/${battleId}/match/list`);
     return response?.data;
   } catch (error) {
     throw new Error(error?.message);

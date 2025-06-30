@@ -15,9 +15,12 @@ import toast from 'react-hot-toast';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { APP_ROUTES } from '@/constants/app-routes';
+import { useLoggedInUser } from '@/hooks/useLoggedInUser';
 
 const Signup = () => {
   const router = useRouter();
+  const { setLoggedInUser } = useLoggedInUser();
+
   const {
     register,
     handleSubmit,
@@ -91,8 +94,10 @@ const Signup = () => {
           password,
           profileImageUrl,
         };
-        await registerUser(userPayload);
+        const response = await registerUser(userPayload);
+        setLoggedInUser(response?.user);
         reset();
+
         router.replace(APP_ROUTES.DASHBOARD);
       }
     } catch (error) {

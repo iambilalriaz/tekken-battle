@@ -13,9 +13,11 @@ import { loginUserAPI } from '@/lib/api';
 import { useEffect } from 'react';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
 import toast from 'react-hot-toast';
+import { useLoggedInUser } from '../hooks/useLoggedInUser';
 
 const Login = () => {
   const router = useRouter();
+  const { setLoggedInUser } = useLoggedInUser();
   const {
     register,
     handleSubmit,
@@ -37,7 +39,9 @@ const Login = () => {
 
   const onLoginUser = async (data) => {
     const { email, password } = data;
-    await loginUser({ email, password });
+    const response = await loginUser({ email, password });
+    setLoggedInUser(response?.user);
+
     reset();
     router.replace(APP_ROUTES.DASHBOARD);
   };

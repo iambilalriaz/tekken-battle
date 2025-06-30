@@ -68,6 +68,8 @@ export async function PATCH(req) {
     if (action === 'finish') {
       requestStatus = 'finished';
     }
+    battleRequest.status = requestStatus;
+
     await BattleRequest.updateOne(
       { _id: requestId },
       { $set: { status: requestStatus }, $unset: { expiresAt: 1 } }

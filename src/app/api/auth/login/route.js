@@ -27,7 +27,7 @@ export async function POST(req) {
           message: 'Login successful',
           accessToken,
           user: {
-            id: user._id,
+            id: user.userId,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,

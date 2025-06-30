@@ -41,7 +41,7 @@ const MatchForm = ({ isOpen, toggleModal, fetchBattleMatches }) => {
       loser: loser,
       player1Perfects,
       player2Perfects,
-      cleanSweep: cleanSweep,
+      cleanSweep: player1Perfects && player2Perfects ? false : cleanSweep,
     };
 
     await addNewMatch(battle?._id, paylod);
@@ -49,9 +49,6 @@ const MatchForm = ({ isOpen, toggleModal, fetchBattleMatches }) => {
 
     toggleModal();
     await fetchBattleMatches();
-
-    // if (onSubmit) onSubmit(data);
-    // toggleModal();
   };
   useEffect(() => {
     if (errorMessage) {
@@ -83,6 +80,7 @@ const MatchForm = ({ isOpen, toggleModal, fetchBattleMatches }) => {
             label={`${requester?.name} Perfect Rounds`}
             classes='my-4'
             min={0}
+            max={3 - watch('player2Perfects')}
           />
         )}
       />
@@ -95,6 +93,7 @@ const MatchForm = ({ isOpen, toggleModal, fetchBattleMatches }) => {
             {...field}
             label={`${acceptor?.name} Perfect Rounds`}
             min={0}
+            max={3 - watch('player1Perfects')}
             classes='my-4'
           />
         )}
@@ -110,6 +109,8 @@ const MatchForm = ({ isOpen, toggleModal, fetchBattleMatches }) => {
           type='checkbox'
           className='h-5 w-5 accent-secondary cursor-pointer my-4'
           {...register('cleanSweep')}
+          disabled={watch('player1Perfects') && watch('player2Perfects')}
+          readOnly={watch('player1Perfects') && watch('player2Perfects')}
         />
         <label
           htmlFor='cleanSweep'

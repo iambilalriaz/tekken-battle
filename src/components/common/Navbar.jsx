@@ -4,9 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { FaChevronDown } from 'react-icons/fa';
 import { APP_ROUTES } from '@/constants/app-routes';
-import { useAuthStatus } from '@/hooks/useAuthStatus';
+import { useLoggedInUser } from '@/hooks/useLoggedInUser';
 import { usePathname, useRouter } from 'next/navigation';
-import Loader from '@/components/common/Loader';
 import { logoutUserAPI } from '@/lib/api';
 
 const NAVBAR_LINKS = [
@@ -16,14 +15,13 @@ const NAVBAR_LINKS = [
 ];
 
 const Navbar = () => {
-  const { loading, loggedIn, user } = useAuthStatus();
+  const { loggedInUser, resetLoggedInUser } = useLoggedInUser();
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
-
   const toggleMenu = () => {
-    if (loggedIn) {
+    if (loggedInUser) {
       setIsOpen(!isOpen);
     } else {
       router.push(APP_ROUTES.LOGIN);
@@ -32,6 +30,7 @@ const Navbar = () => {
 
   const onLogoutUser = async () => {
     await logoutUserAPI();
+    resetLoggedInUser();
     router.push(APP_ROUTES.LOGIN);
   };
 
@@ -60,8 +59,8 @@ const Navbar = () => {
   return (
     <nav className='fixed w-full top-0 left-0 z-50 bg-white/10 backdrop-blur-md border-b border-white/20 shadow-md px-6 py-3'>
       <div className='flex justify-between items-center'>
-        <Link href='/' className='text-3xl font-bold text-white'>
-          🎮
+        <Link href='/' className='text-xl font-bold text-white'>
+          🎮 <span className='text-sm'>Tekken Battle</span>
         </Link>
         <div ref={menuRef} className='relative'>
           {!isAuthPage && (
@@ -69,17 +68,8 @@ const Navbar = () => {
               className='flex items-center text-secondary hover:bg-secondary hover:border-secondary hover:text-primary border px-4 py-1.5 border-white cursor-pointer font-semibold'
               onClick={toggleMenu}
               aria-label='Toggle Menu'
-              disabled={loading}
             >
-              {loading ? (
-                <Loader variant='secondary' size='xs' />
-              ) : loggedIn ? (
-                <>
-                  {user?.firstName} <FaChevronDown className='ml-2' />
-                </>
-              ) : (
-                'Login'
-              )}
+              {loggedInUser?.firstName} <FaChevronDown className='ml-2' />
             </button>
           )}
 

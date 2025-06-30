@@ -70,7 +70,7 @@ export async function POST(req) {
           message: 'User created and logged in successfully',
           accessToken,
           user: {
-            id: user._id,
+            id: user.userId,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
