@@ -26,10 +26,12 @@
     "pusher": "^5.2.0",
     "pusher-js": "^8.4.0",
     "react": "^19.0.0",
+    "react-datepicker": "^8.4.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.58.1",
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
+    "react-swipeable": "^7.0.2",
     "zustand": "^5.0.6"
   },
   "devDependencies": {

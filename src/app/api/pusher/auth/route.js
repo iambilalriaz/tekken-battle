@@ -28,7 +28,6 @@ export async function POST(req) {
 
   try {
     const user = jwt.verify(token, JWT_ACCESS_SECRET);
-
     const expectedChannel = `private-user-${user.userId}`;
 
     // Prevent users from subscribing to other users' channels

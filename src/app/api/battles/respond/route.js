@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import dbConnect from '@/lib/mongoose';
-import BattleRequest from '@/models/BattleRequest';
+import Battle from '@/models/Battle';
 import Pusher from 'pusher';
 import { cookies } from 'next/headers';
+import { BATTLE_STATUSES } from '../../../../constants';
 
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -39,24 +40,25 @@ export async function PATCH(req) {
   }
 
   const { requestId, action } = await req.json();
-  if (!requestId || !['accept', 'reject'].includes(action)) {
+  if (!requestId || !action) {
     return NextResponse.json(
       { success: false, error: 'Invalid input' },
       { status: 400 }
     );
   }
 
-  const battleRequest = await BattleRequest.findById(requestId);
+  const battle = await Battle.findById(requestId);
 
-  if (!battleRequest || battleRequest.status !== 'requested') {
+  if (!battle) {
     return NextResponse.json(
-      { success: false, error: 'Request not found or already responded to' },
+      { success: false, error: 'Request not found.' },
       { status: 404 }
     );
   }
-  const requesterId = battleRequest?.requester?.id?.toString();
-  const acceptorId = battleRequest?.acceptor?.id?.toString();
-  if (acceptorId !== user.userId) {
+  const requesterId = battle?.requester?.id?.toString();
+  const acceptorId = battle?.acceptor?.id?.toString();
+
+  if (![requesterId, acceptorId].includes(user.userId)) {
     return NextResponse.json(
       { success: false, error: 'Forbidden' },
       { status: 403 }
@@ -64,19 +66,19 @@ export async function PATCH(req) {
   }
 
   if (['accept', 'finish'].includes(action)) {
-    let requestStatus = 'in-match';
+    let requestStatus = BATTLE_STATUSES.IN_MATCH;
     if (action === 'finish') {
-      requestStatus = 'finished';
+      requestStatus = BATTLE_STATUSES.FINISHED;
     }
-    battleRequest.status = requestStatus;
+    battle.status = requestStatus;
 
-    await BattleRequest.updateOne(
+    await Battle.updateOne(
       { _id: requestId },
       { $set: { status: requestStatus }, $unset: { expiresAt: 1 } }
     );
   } else {
-    battleRequest.status = 'rejected';
-    await battleRequest.save();
+    battle.status = BATTLE_STATUSES.REJECTED;
+    await battle.save();
   }
 
   // Notify requester via Pusher
@@ -84,11 +86,11 @@ export async function PATCH(req) {
     `private-user-${requesterId}`,
     'battle-request-updated',
     {
-      _id: battleRequest._id,
-      status: battleRequest.status,
-      updatedAt: battleRequest.updatedAt,
+      _id: battle._id,
+      status: battle.status,
+      updatedAt: battle.updatedAt,
     }
   );
 
-  return NextResponse.json({ success: true, data: battleRequest });
+  return NextResponse.json({ success: true, data: battle });
 }

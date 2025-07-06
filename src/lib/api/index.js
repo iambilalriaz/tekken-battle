@@ -54,7 +54,7 @@ export const fetchAllUsersAPI = async () => {
 };
 export const fetchYourBattleRequestsAPI = async () => {
   try {
-    const response = await api.get('/battle-request/list');
+    const response = await api.get('/battles/list');
     return response?.data;
   } catch (error) {
     throw new Error(error?.message);
@@ -62,7 +62,7 @@ export const fetchYourBattleRequestsAPI = async () => {
 };
 export const respondToBattleRequestAPI = async (payload) => {
   try {
-    const response = await api.patch('/battle-request/respond', payload);
+    const response = await api.patch('/battles/respond', payload);
     return response?.data;
   } catch (error) {
     throw new Error(error?.message);
@@ -70,7 +70,7 @@ export const respondToBattleRequestAPI = async (payload) => {
 };
 export const getBattleDetailsAPI = async (battleId) => {
   try {
-    const response = await api.get(`/battle-request/${battleId}`);
+    const response = await api.get(`/battles/${battleId}`);
 
     return response?.data;
   } catch (error) {
@@ -79,10 +79,7 @@ export const getBattleDetailsAPI = async (battleId) => {
 };
 export const addNewMatchAPI = async (battleId, payload) => {
   try {
-    const response = await api.post(
-      `/battle-request/${battleId}/match/add`,
-      payload
-    );
+    const response = await api.post(`/battles/${battleId}/match/add`, payload);
     return response?.data;
   } catch (error) {
     throw new Error(error?.message);
@@ -90,9 +87,20 @@ export const addNewMatchAPI = async (battleId, payload) => {
 };
 export const fetchBattleMatchesAPI = async (battleId) => {
   try {
-    const response = await api.get(`/battle-request/${battleId}/match/list`);
+    const response = await api.get(`/battles/${battleId}/match/list`);
     return response?.data;
   } catch (error) {
     throw new Error(error?.message);
+  }
+};
+export const fetchDashboardDataAPI = async ({ date, opponentId }) => {
+  try {
+    const response = await api.post('/dashboard', {
+      date,
+      opponentId,
+    });
+    return response?.data;
+  } catch (error) {
+    throw new Error(error?.response?.data?.error || error.message);
   }
 };

@@ -1,7 +1,10 @@
+import { BATTLE_STATUSES } from '@/constants';
+
 const STATUSES = {
-  requested: 'bg-dodger-blue',
-  'in-match': 'bg-success',
-  rejected: 'bg-error',
+  [BATTLE_STATUSES.REQUESTED]: 'bg-dodger-blue',
+  [BATTLE_STATUSES.IN_MATCH]: 'bg-success',
+  [BATTLE_STATUSES.REJECTED]: 'bg-error',
+  [BATTLE_STATUSES.FINISHED]: 'bg-success',
 };
 const RequestStatus = ({ status }) => {
   return (

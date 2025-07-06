@@ -1,7 +1,11 @@
 import { useState } from 'react';
 
-export const useNetworkRequest = ({ apiFunction, initialData = null }) => {
-  const [loading, setLoading] = useState(false);
+export const useNetworkRequest = ({
+  initialLoader = false,
+  apiFunction,
+  initialData = null,
+}) => {
+  const [loading, setLoading] = useState(initialLoader);
   const [data, setData] = useState(initialData);
   const [error, setError] = useState('');
   const executeFunction = async (...params) => {

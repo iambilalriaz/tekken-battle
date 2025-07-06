@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongoose';
 import User from '@/models/User';
 import Match from '@/models/Match';
-import BattleRequest from '@/models/BattleRequest';
+import Battle from '@/models/Battle';
+import { BATTLE_STATUSES } from '../../../../../../constants';
 
 export async function POST(req, { params }) {
   await dbConnect();
@@ -54,9 +55,9 @@ export async function POST(req, { params }) {
             loser.toString() === player1 ? player1Perfects : player2Perfects,
         },
       }),
-      BattleRequest.findByIdAndUpdate(battleRequestId, {
+      Battle.findByIdAndUpdate(battleRequestId, {
         $push: { matches: match._id },
-        $set: { status: 'in-match' },
+        $set: { status: BATTLE_STATUSES.IN_MATCH },
       }),
     ];
 

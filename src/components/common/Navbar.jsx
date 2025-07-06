@@ -10,7 +10,7 @@ import { logoutUserAPI } from '@/lib/api';
 
 const NAVBAR_LINKS = [
   { path: APP_ROUTES.DASHBOARD, label: 'Dashboard' },
-  { path: APP_ROUTES.BATTLE_REQUESTS, label: 'Battle Requests' },
+  { path: APP_ROUTES.BATTLES.LIST, label: 'Battles' },
   { path: APP_ROUTES.DASHBOARD, label: 'Profile' },
 ];
 
@@ -76,14 +76,25 @@ const Navbar = () => {
           {isOpen && (
             <ul className='mt-3 space-y-2 w-60  text-primary absolute top-12 right-0 bg-white backdrop-blur-md border border-white/20 shadow-md px-4 py-3 rounded'>
               {NAVBAR_LINKS.map(({ label, path }) => (
-                <li key={label} className='hover:font-medium'>
-                  <Link href={path} onClick={() => setIsOpen(false)}>
+                <li
+                  key={label}
+                  className='hover:font-medium border-b pb-2 text-sm'
+                >
+                  <Link
+                    href={path}
+                    onClick={() => setIsOpen(false)}
+                    className='block w-full px-2 py-1 rounded hover:bg-gray-100'
+                  >
                     {label}
                   </Link>
                 </li>
               ))}
-              <li className='hover:font-medium'>
-                <Link href={APP_ROUTES.LOGIN} onClick={onLogoutUser}>
+              <li className='hover:font-medium text-sm'>
+                <Link
+                  href={APP_ROUTES.LOGIN}
+                  onClick={onLogoutUser}
+                  className='block w-full px-2 py-1 rounded hover:bg-gray-100'
+                >
                   Logout
                 </Link>
               </li>

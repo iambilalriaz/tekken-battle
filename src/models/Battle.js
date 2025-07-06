@@ -1,7 +1,7 @@
-// models/BattleRequest.js
 import mongoose from 'mongoose';
+import { BATTLE_STATUSES } from '../constants';
 
-const BattleRequestSchema = new mongoose.Schema({
+const BattleSchema = new mongoose.Schema({
   requester: {
     id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true },
@@ -14,8 +14,13 @@ const BattleRequestSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['requested', 'in-match', 'rejected'],
-    default: 'requested',
+    enum: [
+      BATTLE_STATUSES.REQUESTED,
+      BATTLE_STATUSES.IN_MATCH,
+      BATTLE_STATUSES.FINISHED,
+      BATTLE_STATUSES.REJECTED,
+    ],
+    default: BATTLE_STATUSES.REQUESTED,
   },
   matches: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Match' }],
   createdAt: { type: Date, default: Date.now },
@@ -27,5 +32,4 @@ const BattleRequestSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.BattleRequest ||
-  mongoose.model('BattleRequest', BattleRequestSchema);
+export default mongoose.models.Battle || mongoose.model('Battle', BattleSchema);

@@ -4,7 +4,13 @@ import clsx from 'clsx';
 import { RiArrowDropDownLine } from 'react-icons/ri';
 
 const FloatingSelect = (props) => {
-  const { classes = '', label = '', options = [], disabled = false } = props;
+  const {
+    classes = '',
+    label = '',
+    options = [],
+    disabled = false,
+    inputStyles = '',
+  } = props;
   return (
     <div className={clsx('relative w-full', classes)}>
       <select
@@ -12,7 +18,8 @@ const FloatingSelect = (props) => {
         disabled={disabled}
         className={clsx(
           'input input-bordered w-full peer pt-6 pb-1 placeholder-transparent text-white pl-3 pr-10 border-white border bg-transparent',
-          'focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary appearance-none'
+          'focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary appearance-none',
+          inputStyles
         )}
         {...props}
       >

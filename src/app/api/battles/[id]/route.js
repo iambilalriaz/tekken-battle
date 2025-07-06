@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongoose';
-import BattleRequest from '@/models/BattleRequest';
+import Battle from '@/models/Battle';
 
 export const dynamic = 'force-dynamic'; // optional: disables caching
 
@@ -16,9 +16,8 @@ export async function GET(req, context) {
       { status: 400 }
     );
   }
-  console.log('testing id', id);
   try {
-    const battle = await BattleRequest.findById(id);
+    const battle = await Battle.findById(id);
 
     if (!battle) {
       return NextResponse.json(

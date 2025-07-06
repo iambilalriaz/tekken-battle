@@ -13,24 +13,31 @@ import RequestStatus from './common/RequestStatus';
 import RespondButtons from './RespondButtons';
 import { useRouter } from 'next/navigation';
 import { APP_ROUTES } from '../constants/app-routes';
+import Button from './common/Button';
+import PlayerCard from './matches/PlayerCard';
+import { BATTLE_STATUSES } from '../constants';
 
 const DESCRIPTIONS = {
-  requested: {
+  [BATTLE_STATUSES.REQUESTED]: {
     requester: 'You have invited :playerName to play!',
     acceptor: ':playerName has invited you to play.',
   },
-  'in-match': {
+  [BATTLE_STATUSES.IN_MATCH]: {
     requester: ':playerName accepted your challenge. ✅',
     acceptor: 'You accepted :playerName’s challenge. ✅',
   },
-  rejected: {
+  [BATTLE_STATUSES.REJECTED]: {
     requester: ':playerName declined your challenge. ❌',
     acceptor: 'You rejected :playerName’s challenge. ❌',
   },
+  [BATTLE_STATUSES.FINISHED]: {
+    requester: '',
+    acceptor: '',
+  },
 };
 
-const BattleRequest = ({ battleRequest, closeModal = () => {} }) => {
-  const { _id, acceptor, requester, status, createdAt } = battleRequest ?? {};
+const Battle = ({ battle, closeModal = () => {} }) => {
+  const { _id, acceptor, requester, status, createdAt } = battle ?? {};
   const router = useRouter();
   const { setBattleRequests } = useBattleRequests();
 
@@ -60,7 +67,9 @@ const BattleRequest = ({ battleRequest, closeModal = () => {} }) => {
     loading: fetchingBattleRequests,
     errorMessage: fetchBattleRequestsError,
     executeFunction: fetchYourBattleRequests,
-  } = useNetworkRequest({ apiFunction: fetchYourBattleRequestsAPI });
+  } = useNetworkRequest({
+    apiFunction: fetchYourBattleRequestsAPI,
+  });
 
   const onRespondToBattleRequest = async (action = 'accept') => {
     await respondToBattleRequest({
@@ -71,7 +80,7 @@ const BattleRequest = ({ battleRequest, closeModal = () => {} }) => {
     setBattleRequests(response);
     closeModal();
     if (action === 'accept') {
-      router.push(APP_ROUTES.BATTLE.replace(':battleId', _id));
+      router.push(APP_ROUTES.BATTLES.RECORD.replace(':battleId', _id));
     }
   };
 
@@ -86,40 +95,32 @@ const BattleRequest = ({ battleRequest, closeModal = () => {} }) => {
     }
   }, [fetchBattleRequestsError]);
 
+  const navigateToBattleDetails = () => {
+    if (status === BATTLE_STATUSES.IN_MATCH) {
+      router.push(APP_ROUTES.BATTLES.RECORD.replace(':battleId', battle?._id));
+    }
+  };
+
+  const player1 = {
+    firstName: requester?.name?.split(' ')?.[0],
+    profileImageUrl: requester?.profileImage,
+  };
+  const player2 = {
+    firstName: acceptor?.name?.split(' ')?.[0],
+    profileImageUrl: acceptor?.profileImage,
+  };
   return (
-    <div className='border-2 border-white p-4 my-4'>
+    <div className='border border-white p-4 my-4 animate__animated animate__rollIn'>
       <div className='flex justify-end'>
         <RequestStatus status={status} />
       </div>
-      <div className='flex  justify-center items-center p-6 gap-1'>
-        <div className='w-24 h-24 sm:w-36 sm:h-36 border-white border-2 overflow-hidden rounded relative'>
-          <img
-            src={requester?.profileImage}
-            className='w-full h-full object-cover'
-            alt='Requester'
-          />
-          <p className='absolute text-primary font-bold left-0 right-0 bottom-0 text-center bg-secondary text-xs sm:text-base'>
-            {requester?.name?.split(' ')?.[0]}
-          </p>
-        </div>
-        <div className='justify-center items-center w-36 hidden sm:flex'>
+
+      <div className='flex items-center flex-row max-[380px]:flex-col justify-between gap-2 md:gap-6 w-full mt-4 px-2 md:p-6'>
+        <PlayerCard player={player1} isBattleDetails />
+        <div>
           <img src='/vs.png' alt='VS' width={100} />
         </div>
-        <img
-          src='/vs.png'
-          alt='VS'
-          className='absolute z-10 w-24 sm:max-w-36 sm:hidden'
-        />
-        <div className='w-24 h-24 sm:w-36 sm:h-36 border-white border-2 overflow-hidden rounded relative'>
-          <img
-            src={acceptor?.profileImage}
-            className='w-full h-full object-cover'
-            alt='Acceptor'
-          />
-          <p className='absolute text-primary font-bold left-0 right-0 bottom-0 text-center bg-secondary text-xs sm:text-base'>
-            {acceptor?.name?.split(' ')?.[0]}
-          </p>
-        </div>
+        <PlayerCard player={player2} isBattleDetails />
       </div>
       <div>
         <p className='text-center my-4 font-semibold'>{getDescription()}</p>
@@ -127,8 +128,8 @@ const BattleRequest = ({ battleRequest, closeModal = () => {} }) => {
       <div>
         {responding || fetchingBattleRequests ? (
           <Loader />
-        ) : isMe ? null : (
-          status === 'requested' && (
+        ) : status === BATTLE_STATUSES.REQUESTED ? (
+          isMe ? null : (
             <RespondButtons
               config={{
                 success: {
@@ -142,10 +143,18 @@ const BattleRequest = ({ battleRequest, closeModal = () => {} }) => {
               }}
             />
           )
+        ) : (
+          status !== BATTLE_STATUSES.REJECTED && (
+            <div className='flex justify-center'>
+              <Button variant='dodger-blue' onClick={navigateToBattleDetails}>
+                Details
+              </Button>
+            </div>
+          )
         )}
       </div>
     </div>
   );
 };
 
-export default BattleRequest;
+export default Battle;

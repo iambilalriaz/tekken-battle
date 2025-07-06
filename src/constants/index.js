@@ -3,3 +3,10 @@ export const passwordRegex =
 export const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+export const BATTLE_STATUSES = {
+  REQUESTED: 'requested',
+  IN_MATCH: 'in-match',
+  FINISHED: 'finished',
+  REJECTED: 'rejected',
+};

@@ -2,13 +2,7 @@
 
 import { useEffect } from 'react';
 
-export default function GlassyModal({
-  title = '',
-  isOpen,
-  onClose,
-  children,
-  styles = 'w-full lg:w-1/2',
-}) {
+export default function GlassyModal({ title = '', isOpen, onClose, children }) {
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === 'Escape') onClose();
@@ -31,7 +25,7 @@ export default function GlassyModal({
         <div className='flex justify-between items-center mb-4'>
           <h2 className='text-xl font-semibold'>{title}</h2>
           <button
-            className='text-white hover:text-red-400 transition'
+            className='text-white hover:text-red-400 transition ml-12'
             onClick={onClose}
           >
             ✕

@@ -8,17 +8,6 @@ const axiosClient = axios.create({
   withCredentials: true, // Optional: set based on your auth requirements
 });
 
-// axiosClient.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response?.status === 401) {
-//       // e.g., redirect to login or show toast
-//       window.location.href = '/login';
-//     }
-//     return Promise.reject(error);
-//   }
-// );
-
 const api = {
   get: async (url, config = {}) => {
     try {

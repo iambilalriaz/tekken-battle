@@ -1,4 +1,5 @@
 import Match from '@/models/Match';
+import User from '@/models/User'; // ✅ Import the User model
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongoose';
 
@@ -8,8 +9,9 @@ export async function GET(req, { params }) {
 
   try {
     const matches = await Match.find({ battleRequestId })
-      .populate('player1', '_id firstName lastName profileImage')
-      .populate('player2', '_id firstName lastName profileImage')
+      .populate('player1', '_id firstName lastName profileImageUrl')
+      .populate('player2', '_id firstName lastName profileImageUrl')
+      .sort({ createdAt: -1 })
       .lean();
 
     const enhancedMatches = matches.map((match) => ({

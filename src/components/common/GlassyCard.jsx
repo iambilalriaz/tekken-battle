@@ -2,10 +2,15 @@
 
 import clsx from 'clsx';
 
-const GlassyCard = ({ title, children, styles = '' }) => {
+const GlassyCard = ({ title, children, styles = '', cardStyles = '' }) => {
   return (
     <div className={clsx('p-4', '', styles)}>
-      <div className='glass w-full p-6 rounded-2xl shadow-lg border border-white/20 backdrop-blur-md'>
+      <div
+        className={clsx(
+          'glass w-full p-6 rounded-2xl shadow-lg border border-white/20 backdrop-blur-md',
+          cardStyles
+        )}
+      >
         {title && (
           <h2 className='text-xl font-bold text-white mb-2 border-b-2 border-white border-dashed w-fit'>
             {title}
@@ -18,4 +23,3 @@ const GlassyCard = ({ title, children, styles = '' }) => {
 };
 
 export default GlassyCard;
-// mt-16 w-full lg:max-w-2/4 mx-auto

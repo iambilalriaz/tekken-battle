@@ -1,4 +1,4 @@
-import BattleRequests from '@/pages/BattleRequests';
+import BattleRequests from '@/pages/Battles';
 
 const page = () => {
   return <BattleRequests />;

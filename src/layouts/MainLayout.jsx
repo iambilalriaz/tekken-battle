@@ -1,17 +1,23 @@
 'use client';
 import Navbar from '@/components/common/Navbar';
-import PendingRequests from '../components/PendingRequests';
+import PendingRequests from '@/components/PendingRequests';
 import Pusher from 'pusher-js';
-import { useLoggedInUser } from '../hooks/useLoggedInUser';
+import { useLoggedInUser } from '@/hooks/useLoggedInUser';
 import { useEffect, useState } from 'react';
-import { useBattleRequests } from '../store/useBattleRequests';
+import { useBattleRequests } from '@/store/useBattleRequests';
+import { BATTLE_STATUSES } from '@/constants';
+import { usePathname, useRouter } from 'next/navigation';
+import { APP_ROUTES } from '@/constants/app-routes';
+import toast from 'react-hot-toast';
 
 const MainLayout = ({ children }) => {
   const { loggedInUser } = useLoggedInUser();
   const { battleRequests, setBattleRequests } = useBattleRequests();
   const [invited, setInvited] = useState(false);
   const [pendingInvites, setPendingInvites] = useState([]);
-  console.log('testing loggedInUser', loggedInUser);
+
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
@@ -36,6 +42,17 @@ const MainLayout = ({ children }) => {
         return request;
       });
       setBattleRequests(updatedBattleRequests);
+      if (response?.status === BATTLE_STATUSES.FINISHED) {
+        if (pathname?.includes(APP_ROUTES.BATTLES.LIST)) {
+          router.replace(APP_ROUTES.DASHBOARD);
+        } else {
+          toast.success('Battle finished. ✅');
+        }
+      } else if (response?.status === BATTLE_STATUSES.IN_MATCH) {
+        router.push(
+          APP_ROUTES.BATTLES.RECORD.replace(':battleId', response?._id)
+        );
+      }
     });
 
     return () => {
@@ -50,7 +67,9 @@ const MainLayout = ({ children }) => {
   return (
     <main className='grid place-items-center h-screen mx-4'>
       <Navbar />
-      {children}
+      <div className='w-full grid place-items-center max-h-full overflow-auto py-16'>
+        {children}
+      </div>
       <PendingRequests
         isOpen={invited}
         data={pendingInvites}

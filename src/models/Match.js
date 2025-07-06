@@ -27,7 +27,7 @@ const MatchSchema = new mongoose.Schema(
     cleanSweep: { type: Boolean, default: false },
     battleRequestId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'BattleRequest',
+      ref: 'Battle',
       required: true,
     },
     createdAt: { type: Date, default: Date.now },

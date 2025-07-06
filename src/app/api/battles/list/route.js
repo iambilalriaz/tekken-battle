@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import dbConnect from '@/lib/mongoose';
-import BattleRequest from '@/models/BattleRequest';
+import Battle from '@/models/Battle';
 import jwt from 'jsonwebtoken';
+import { BATTLE_STATUSES } from '../../../../constants';
 
 const JWT_SECRET = process.env.JWT_ACCESS_SECRET; // Ensure this is defined in your .env
 
@@ -32,8 +33,17 @@ export async function GET() {
   const playerId = user.userId;
 
   try {
-    const battleRequests = await BattleRequest.find({
-      $or: [{ 'requester.id': playerId }, { 'acceptor.id': playerId }],
+    const battleRequests = await Battle.find({
+      $and: [
+        {
+          $or: [{ 'requester.id': playerId }, { 'acceptor.id': playerId }],
+        },
+        {
+          status: {
+            $in: [BATTLE_STATUSES.REQUESTED, BATTLE_STATUSES.IN_MATCH],
+          },
+        },
+      ],
     }).sort({ createdAt: -1 });
 
     return NextResponse.json(

@@ -38,13 +38,13 @@ const SelectYourOpponent = () => {
     await sendBattleRequest({
       acceptorId,
     });
-    if (pathname === APP_ROUTES.BATTLE_REQUESTS) {
+    if (pathname === APP_ROUTES.BATTLES.LIST) {
       const requests = await fetchBattleRequests();
       setBattleRequests(requests);
     }
     toggleOpponentSelectionModal();
 
-    router.push(APP_ROUTES.BATTLE_REQUESTS);
+    router.push(APP_ROUTES.BATTLES.LIST);
   };
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const SelectYourOpponent = () => {
         allUsers?.map((user) => (
           <div
             key={user?.userId}
-            className='flex items-center hover:bg-gray/20 active:bg-gray/20 cursor-pointer p-2 select-none'
+            className='flex items-center hover:bg-gray/20 active:bg-gray/20 cursor-pointer p-2 select-none animate__animated animate__rollIn faster'
             onClick={() => createBattleRequest(user?.userId)}
           >
             <div className='w-10 h-10 rounded-full overflow-hidden border-4 border-white'>

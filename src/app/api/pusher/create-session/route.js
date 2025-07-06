@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import Pusher from 'pusher';
 import jwt from 'jsonwebtoken';
-import BattleRequest from '@/models/BattleRequest';
+import Battle from '@/models/Battle';
 import dbConnect from '@/lib/mongoose';
 import User from '@/models/User';
+import { BATTLE_STATUSES } from '../../../../constants';
 
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -58,8 +59,8 @@ export async function POST(req) {
     _id: acceptorId,
   }).select('firstName lastName profileImageUrl');
 
-  const existingRequest = await BattleRequest.findOne({
-    status: 'requested',
+  const existingRequest = await Battle.findOne({
+    status: BATTLE_STATUSES.REQUESTED,
     $or: [
       { 'requester.id': requesterId, 'acceptor.id': acceptorId },
       { 'requester.id': acceptorId, 'acceptor.id': requesterId },
@@ -77,9 +78,9 @@ export async function POST(req) {
     );
   }
 
-  const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-  const battleRequest = await BattleRequest.create({
+  const battle = await Battle.create({
     requester: {
       id: requesterId,
       name,
@@ -90,24 +91,23 @@ export async function POST(req) {
       name: `${acceptor?.firstName} ${acceptor?.lastName}`,
       profileImage: acceptor?.profileImageUrl,
     },
-    status: 'requested',
+    status: BATTLE_STATUSES.REQUESTED,
     expiresAt,
   });
-
   await pusher.trigger(
     `private-user-${acceptorId}`, // target only the acceptor
     'battle-request-received',
     {
-      _id: battleRequest._id,
-      requester: battleRequest.requester,
-      acceptor: battleRequest.acceptor,
-      status: battleRequest.status,
-      createdAt: battleRequest.createdAt,
+      _id: battle._id,
+      requester: battle.requester,
+      acceptor: battle.acceptor,
+      status: battle.status,
+      createdAt: battle.createdAt,
     }
   );
 
   return NextResponse.json(
-    { success: true, data: battleRequest, error: '' },
+    { success: true, data: battle, error: '' },
     { status: 200 }
   );
 }
