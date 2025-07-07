@@ -13,7 +13,7 @@ import { loginUserAPI } from '@/lib/api';
 import { useEffect } from 'react';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
 import toast from 'react-hot-toast';
-import { useLoggedInUser } from '../hooks/useLoggedInUser';
+import { useLoggedInUser } from '@/hooks/useLoggedInUser';
 
 const Login = () => {
   const router = useRouter();
@@ -80,16 +80,18 @@ const Login = () => {
         <button className='underline cursor-pointer text-secondary mt-4 text-end w-full text-sm md:text-base'>
           Forgot Password?
         </button>
-        {loading ? (
-          <Loader variant='secondary' />
-        ) : (
-          <Button
-            className='mt-4 mx-auto w-full md:w-1/2 flex justify-center'
-            onClick={handleSubmit(onLoginUser)}
-          >
-            Login
-          </Button>
-        )}
+        <div className='my-4'>
+          {loading ? (
+            <Loader variant='secondary' />
+          ) : (
+            <Button
+              className='mt-4 mx-auto w-full md:w-1/2 flex justify-center'
+              onClick={handleSubmit(onLoginUser)}
+            >
+              Login
+            </Button>
+          )}
+        </div>
         <div className='text-sm md:text-base text-center mt-4'>
           <p className='text-white'>Don't have an account?</p>
           <button

@@ -23,7 +23,9 @@ export default function GlassyModal({ title = '', isOpen, onClose, children }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className='flex justify-between items-center mb-4'>
-          <h2 className='text-xl font-semibold'>{title}</h2>
+          <h2 className='text-xl font-semibold border-b-2 border-white border-dashed'>
+            {title}
+          </h2>
           <button
             className='text-white hover:text-red-400 transition ml-12'
             onClick={onClose}

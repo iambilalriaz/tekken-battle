@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import Battle from '@/models/Battle';
 import dbConnect from '@/lib/mongoose';
 import User from '@/models/User';
-import { BATTLE_STATUSES } from '../../../../constants';
+import { BATTLE_STATUSES } from '@/constants';
 
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -20,7 +20,7 @@ const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 export async function POST(req) {
   await dbConnect();
 
-  const token = await cookies().get('accessToken')?.value;
+  const token = cookies().get('accessToken')?.value;
   if (!token) {
     return NextResponse.json(
       { success: false, data: null, error: 'Unauthorized' },
@@ -55,10 +55,34 @@ export async function POST(req) {
       { status: 400 }
     );
   }
+
   const acceptor = await User.findOne({
     _id: acceptorId,
   }).select('firstName lastName profileImageUrl');
 
+  // 🔒 Check if requester or acceptor is already in an IN_MATCH battle
+  const activeBattle = await Battle.findOne({
+    status: BATTLE_STATUSES.IN_MATCH,
+    $or: [
+      { 'requester.id': requesterId },
+      { 'acceptor.id': requesterId },
+      { 'requester.id': acceptorId },
+      { 'acceptor.id': acceptorId },
+    ],
+  });
+
+  if (activeBattle) {
+    return NextResponse.json(
+      {
+        success: false,
+        data: null,
+        error: 'One of the players is already in an ongoing battle.',
+      },
+      { status: 400 }
+    );
+  }
+
+  // ✅ Check for duplicate REQUESTED status between same pair
   const existingRequest = await Battle.findOne({
     status: BATTLE_STATUSES.REQUESTED,
     $or: [
@@ -94,8 +118,9 @@ export async function POST(req) {
     status: BATTLE_STATUSES.REQUESTED,
     expiresAt,
   });
+
   await pusher.trigger(
-    `private-user-${acceptorId}`, // target only the acceptor
+    `private-user-${acceptorId}`,
     'battle-request-received',
     {
       _id: battle._id,

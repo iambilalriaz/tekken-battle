@@ -11,7 +11,7 @@ import { logoutUserAPI } from '@/lib/api';
 const NAVBAR_LINKS = [
   { path: APP_ROUTES.DASHBOARD, label: 'Dashboard' },
   { path: APP_ROUTES.BATTLES.LIST, label: 'Battles' },
-  { path: APP_ROUTES.DASHBOARD, label: 'Profile' },
+  { path: APP_ROUTES.PROFILE, label: 'Profile' },
 ];
 
 const Navbar = () => {

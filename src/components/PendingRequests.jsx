@@ -1,5 +1,5 @@
-import Battle from './Battle';
-import GlassyModal from './common/GlassyModal';
+import Battle from '@/components/Battle';
+import GlassyModal from '@/components/common/GlassyModal';
 
 const PendingRequests = ({ isOpen, data, onClose }) => {
   return (

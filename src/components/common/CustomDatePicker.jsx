@@ -11,7 +11,7 @@ const CustomDatePicker = ({ startDate, setStartDate }) => {
         onChange={setStartDate}
         popperPlacement='bottom-end'
         dateFormat='dd MMM yyyy'
-        className='w-full py-4 pl-12 pr-4 rounded-xl bg-black/50 backdrop-blur-sm text-white placeholder-black/70 focus:outline-none text-sm md:text-base cursor-pointer'
+        className='w-full py-4 pl-12 pr-4 rounded-xl bg-black/50 backdrop-blur-sm text-white border border-white/50 placeholder-black/70 focus:outline-none text-sm md:text-base cursor-pointer'
         calendarClassName='!bg-white !text-black rounded-xl p-4'
         popperClassName='!z-50'
         dayClassName={() =>

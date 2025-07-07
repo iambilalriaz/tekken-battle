@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { BATTLE_STATUSES } from '../constants';
+import { BATTLE_STATUSES } from '@/constants';
 
 const BattleSchema = new mongoose.Schema({
   requester: {

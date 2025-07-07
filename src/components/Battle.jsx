@@ -1,21 +1,21 @@
 import { useEffect } from 'react';
 import { useIsSameUser } from '@/hooks/useIsSameUser';
 import dayjs from '@/utils/dayjs';
-import { useNetworkRequest } from '../hooks/useNetworkRequest';
+import { useNetworkRequest } from '@/hooks/useNetworkRequest';
 import {
   fetchYourBattleRequestsAPI,
   respondToBattleRequestAPI,
-} from '../lib/api';
-import Loader from './common/Loader';
+} from '@/lib/api';
+import Loader from '@/components/common/Loader';
 import toast from 'react-hot-toast';
-import { useBattleRequests } from '../store/useBattleRequests';
-import RequestStatus from './common/RequestStatus';
-import RespondButtons from './RespondButtons';
+import { useBattleRequests } from '@/store/useBattleRequests';
+import RequestStatus from '@/components/common/RequestStatus';
+import RespondButtons from '@/components/RespondButtons';
 import { useRouter } from 'next/navigation';
-import { APP_ROUTES } from '../constants/app-routes';
-import Button from './common/Button';
-import PlayerCard from './matches/PlayerCard';
-import { BATTLE_STATUSES } from '../constants';
+import { APP_ROUTES } from '@/constants/app-routes';
+import Button from '@/components/common/Button';
+import PlayerCard from '@/components/matches/PlayerCard';
+import { BATTLE_STATUSES } from '@/constants';
 
 const DESCRIPTIONS = {
   [BATTLE_STATUSES.REQUESTED]: {
@@ -110,7 +110,7 @@ const Battle = ({ battle, closeModal = () => {} }) => {
     profileImageUrl: acceptor?.profileImage,
   };
   return (
-    <div className='border border-white p-4 my-4 animate__animated animate__rollIn'>
+    <div className='border border-white p-4 my-4 animate__animated animate__fadeIn'>
       <div className='flex justify-end'>
         <RequestStatus status={status} />
       </div>

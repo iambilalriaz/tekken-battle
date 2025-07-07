@@ -8,7 +8,7 @@ import { emailRegex, MAX_FILE_SIZE, passwordRegex } from '@/constants';
 import InputError from '@/components/common/InputError';
 import ImageUploadInput from '@/components/ImageUploadInput';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
-import { registerUserAPI, uploadProfileImage } from '@/lib/api';
+import { registerUserAPI } from '@/lib/api';
 import Loader from '@/components/common/Loader';
 
 import toast from 'react-hot-toast';
@@ -16,6 +16,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { APP_ROUTES } from '@/constants/app-routes';
 import { useLoggedInUser } from '@/hooks/useLoggedInUser';
+import { useUploadImage } from '@/hooks/useUploadImage';
 
 const Signup = () => {
   const router = useRouter();
@@ -37,13 +38,6 @@ const Signup = () => {
   } = useNetworkRequest({
     apiFunction: registerUserAPI,
   });
-  const {
-    loading: uploadingFile,
-    errorMessage: fileUploadError,
-    executeFunction: uploadImage,
-  } = useNetworkRequest({
-    apiFunction: uploadProfileImage,
-  });
 
   const password = watch('password');
 
@@ -53,34 +47,9 @@ const Signup = () => {
     resetField('profileImage');
   };
 
-  const onUploadImage = async () => {
-    if (!watchedFile) {
-      toast.error('Profile picture is required.');
-      return null;
-    }
-
-    if (watchedFile.size > MAX_FILE_SIZE) {
-      toast.error('File size must be under 5MB.');
-      return null;
-    }
-
-    const formData = new FormData();
-    formData.append('file', watchedFile);
-
-    try {
-      const { url } = await uploadImage(formData);
-
-      if (!url) {
-        toast.error('Failed to upload image');
-        return null;
-      }
-
-      return url;
-    } catch (err) {
-      toast.error('Image upload error');
-      return null;
-    }
-  };
+  const { onUploadImage, uploadingFile, fileUploadError } = useUploadImage({
+    watchedFile,
+  });
 
   const onRegisterUser = async (data) => {
     const { firstName, lastName, email, password } = data;

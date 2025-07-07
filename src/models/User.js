@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema(
     password: String,
     profileImageUrl: String,
 
+    totalMatches: Number,
     gamesWon: Number,
     cleanSweaps: Number,
     perfects: Number,

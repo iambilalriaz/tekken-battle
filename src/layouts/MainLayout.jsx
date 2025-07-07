@@ -6,9 +6,11 @@ import { useLoggedInUser } from '@/hooks/useLoggedInUser';
 import { useEffect, useState } from 'react';
 import { useBattleRequests } from '@/store/useBattleRequests';
 import { BATTLE_STATUSES } from '@/constants';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { APP_ROUTES } from '@/constants/app-routes';
 import toast from 'react-hot-toast';
+import { fetchYourBattleRequestsAPI } from '@/lib/api';
+import { useNetworkRequest } from '@/hooks/useNetworkRequest';
 
 const MainLayout = ({ children }) => {
   const { loggedInUser } = useLoggedInUser();
@@ -16,7 +18,12 @@ const MainLayout = ({ children }) => {
   const [invited, setInvited] = useState(false);
   const [pendingInvites, setPendingInvites] = useState([]);
 
-  const pathname = usePathname();
+  const {
+    errorMessage: fetchBattleRequestsError,
+    executeFunction: fetchYourBattleRequests,
+  } = useNetworkRequest({
+    apiFunction: fetchYourBattleRequestsAPI,
+  });
   const router = useRouter();
 
   useEffect(() => {
@@ -29,25 +36,18 @@ const MainLayout = ({ children }) => {
     });
 
     const channel = pusher.subscribe(`private-user-${loggedInUser?.id}`);
-    channel.bind('battle-request-received', (response) => {
+    channel.bind('battle-request-received', async (response) => {
       setInvited(true);
-      setPendingInvites((prevState) => [response, ...prevState]);
+      const data = await fetchYourBattleRequests(BATTLE_STATUSES.REQUESTED);
+      setPendingInvites(data);
+      setBattleRequests(data);
     });
-    channel.bind('battle-request-updated', (response) => {
-      const battledId = response?._id;
-      const updatedBattleRequests = battleRequests?.map((request) => {
-        if (request?._id === battledId) {
-          return { ...request, status: response?.status };
-        }
-        return request;
-      });
-      setBattleRequests(updatedBattleRequests);
+    channel.bind('battle-request-updated', async (response) => {
+      const data = await fetchYourBattleRequests(BATTLE_STATUSES.REQUESTED);
+      setPendingInvites(data);
+      setBattleRequests(data);
       if (response?.status === BATTLE_STATUSES.FINISHED) {
-        if (pathname?.includes(APP_ROUTES.BATTLES.LIST)) {
-          router.replace(APP_ROUTES.DASHBOARD);
-        } else {
-          toast.success('Battle finished. ✅');
-        }
+        router.replace(APP_ROUTES.DASHBOARD);
       } else if (response?.status === BATTLE_STATUSES.IN_MATCH) {
         router.push(
           APP_ROUTES.BATTLES.RECORD.replace(':battleId', response?._id)
@@ -64,6 +64,12 @@ const MainLayout = ({ children }) => {
   const onCloseModal = () => {
     setInvited(false);
   };
+
+  useEffect(() => {
+    if (fetchBattleRequestsError) {
+      toast.error(fetchBattleRequestsError);
+    }
+  }, [fetchBattleRequestsError]);
   return (
     <main className='grid place-items-center h-screen mx-4'>
       <Navbar />

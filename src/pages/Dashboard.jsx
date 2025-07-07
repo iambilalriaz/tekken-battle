@@ -6,19 +6,19 @@ import MainLayout from '@/layouts/MainLayout';
 import { useCallback, useEffect } from 'react';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
 import { fetchAllUsersAPI, fetchDashboardDataAPI } from '@/lib/api';
-import { useDashboardStats } from '../store/useDashboardStats';
+import { useDashboardStats } from '@/store/useDashboardStats';
 
-import { useToggleComparisonModal } from '../store/useToggleComparisonModal';
-import SelectOpponentFilterModal from '../components/SelectOpponentFilterModal';
-import DashboardFilters from '../components/DashboardFilters';
+import { useToggleComparisonModal } from '@/store/useToggleComparisonModal';
+import SelectOpponentFilterModal from '@/components/SelectOpponentFilterModal';
+import DashboardFilters from '@/components/DashboardFilters';
 import toast from 'react-hot-toast';
-import { useAllUsers } from '../store/useAllUsers';
+import { useAllUsers } from '@/store/useAllUsers';
 import dayjs from 'dayjs';
-import PlayerComparisonSummary from '../components/PlayerComparisonSummary';
-import GlassyCard from '../components/common/GlassyCard';
-import Button from '../components/common/Button';
-import { useSelectOpponentModal } from '../store/useSelectOpponentModal';
-import SelectYourOpponent from '../components/SelectYourOpponent';
+import PlayerComparisonSummary from '@/components/PlayerComparisonSummary';
+import GlassyCard from '@/components/common/GlassyCard';
+import Button from '@/components/common/Button';
+import { useSelectOpponentModal } from '@/store/useSelectOpponentModal';
+import SelectYourOpponent from '@/components/SelectYourOpponent';
 
 const Dashboard = () => {
   const { loggedInUser } = useLoggedInUser();
@@ -76,7 +76,7 @@ const Dashboard = () => {
       {fetchingUsers || fetchingStats ? (
         <Loader />
       ) : (
-        <div className='bg-whte h-screen w-full'>
+        <div className='bg-whte h- w-full'>
           <DashboardFilters />
           <div>
             {dashboardStats ? (
@@ -90,19 +90,11 @@ const Dashboard = () => {
               />
             ) : (
               <GlassyCard styles='max-w-sm mx-auto'>
-                <p className='flex justify-center items-center text-xl max-w-sm text-center mx-auto'>
+                <p className='flex justify-center items-center max-w-sm text-center mx-auto'>
                   No match statistics available for the selected date or
                   opponent. Try changing your filters to view past battle
                   records.
                 </p>
-                <div className='flex justify-center mt-6'>
-                  <Button
-                    className='uppercase font-bold'
-                    onClick={toggleOpponentSelectionModal}
-                  >
-                    Create Battle
-                  </Button>
-                </div>
               </GlassyCard>
             )}
           </div>

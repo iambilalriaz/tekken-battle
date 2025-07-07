@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongoose';
 import Battle from '@/models/Battle';
-import Match from '@/models/Match';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
-import { BATTLE_STATUSES } from '../../../constants';
+import { BATTLE_STATUSES } from '@/constants';
 
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 
@@ -55,20 +54,25 @@ export async function POST(req) {
       $or: [
         { 'requester._id': currentUserId },
         { 'acceptor._id': currentUserId },
-        { 'requester.id': currentUserId }, // fallback for embedded IDs
+        { 'requester.id': currentUserId },
         { 'acceptor.id': currentUserId },
       ],
     };
 
-    const battles = await Battle.find(battleQuery).populate('matches').lean(); // return plain JS objects
+    const battles = await Battle.find(battleQuery).populate('matches').lean();
 
-    const result = {
-      opponent: null,
-      totalMatches: 0,
-      yourPerfects: 0,
-      opponentPerfects: 0,
-      yourCleanSweeps: 0,
-      opponentCleanSweeps: 0,
+    let totalMatches = 0;
+    let yourWins = 0;
+    let opponentWins = 0;
+    let yourPerfects = 0;
+    let opponentPerfects = 0;
+    let yourCleanSweeps = 0;
+    let opponentCleanSweeps = 0;
+
+    let opponentInfo = null;
+    let currentUserInfo = {
+      name: user.name || 'You',
+      profileImage: user.profileImageUrl || '',
     };
 
     for (const battle of battles) {
@@ -90,9 +94,8 @@ export async function POST(req) {
 
       if (!thisOpponentId || thisOpponentId !== opponentId) continue;
 
-      if (!result.opponent) {
-        result.opponent = {
-          id: thisOpponentId,
+      if (!opponentInfo) {
+        opponentInfo = {
           name: opponent?.name || '',
           profileImage: opponent?.profileImage || '',
         };
@@ -110,27 +113,95 @@ export async function POST(req) {
 
         if (!isPlayer1 && !isPlayer2) continue;
 
-        result.totalMatches++;
+        totalMatches++;
+
+        const youWon = winnerId === currentUserId;
+        const opponentWon = winnerId === opponentId;
+
+        if (youWon) yourWins++;
+        if (opponentWon) opponentWins++;
 
         if (isPlayer1) {
-          result.yourPerfects += match.player1Perfects || 0;
-          result.opponentPerfects += match.player2Perfects || 0;
+          yourPerfects += match.player1Perfects || 0;
+          opponentPerfects += match.player2Perfects || 0;
         } else {
-          result.yourPerfects += match.player2Perfects || 0;
-          result.opponentPerfects += match.player1Perfects || 0;
+          yourPerfects += match.player2Perfects || 0;
+          opponentPerfects += match.player1Perfects || 0;
         }
 
         if (match.cleanSweep) {
-          if (winnerId === currentUserId) {
-            result.yourCleanSweeps++;
-          } else {
-            result.opponentCleanSweeps++;
+          if (youWon) {
+            yourCleanSweeps++;
+          } else if (opponentWon) {
+            opponentCleanSweeps++;
           }
         }
       }
     }
 
-    return NextResponse.json({ data: result.opponent ? result : null });
+    if (!opponentInfo || totalMatches === 0) {
+      return NextResponse.json({ data: null });
+    }
+
+    let winner, loser;
+    let isDraw = false;
+
+    if (yourWins > opponentWins) {
+      winner = {
+        ...currentUserInfo,
+        perfects: yourPerfects,
+        cleanSweeps: yourCleanSweeps,
+        winCount: yourWins,
+        winPercentage: Math.round((yourWins / totalMatches) * 100),
+      };
+      loser = {
+        ...opponentInfo,
+        perfects: opponentPerfects,
+        cleanSweeps: opponentCleanSweeps,
+        winCount: opponentWins,
+        winPercentage: Math.round((opponentWins / totalMatches) * 100),
+      };
+    } else if (opponentWins > yourWins) {
+      winner = {
+        ...opponentInfo,
+        perfects: opponentPerfects,
+        cleanSweeps: opponentCleanSweeps,
+        winCount: opponentWins,
+        winPercentage: Math.round((opponentWins / totalMatches) * 100),
+      };
+      loser = {
+        ...currentUserInfo,
+        perfects: yourPerfects,
+        cleanSweeps: yourCleanSweeps,
+        winCount: yourWins,
+        winPercentage: Math.round((yourWins / totalMatches) * 100),
+      };
+    } else {
+      isDraw = true;
+      winner = {
+        ...currentUserInfo,
+        perfects: yourPerfects,
+        cleanSweeps: yourCleanSweeps,
+        winCount: yourWins,
+        winPercentage: Math.round((yourWins / totalMatches) * 100),
+      };
+      loser = {
+        ...opponentInfo,
+        perfects: opponentPerfects,
+        cleanSweeps: opponentCleanSweeps,
+        winCount: opponentWins,
+        winPercentage: Math.round((opponentWins / totalMatches) * 100),
+      };
+    }
+
+    return NextResponse.json({
+      data: {
+        totalMatches,
+        isDraw,
+        winner,
+        loser,
+      },
+    });
   } catch (error) {
     console.error('Dashboard Error:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });

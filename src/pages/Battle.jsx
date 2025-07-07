@@ -10,12 +10,15 @@ import { fetchBattleMatchesAPI, getBattleDetailsAPI } from '@/lib/api';
 import { useBattle } from '@/store/useBattle';
 import Loader from '@/components/common/Loader';
 import { useBattleMatches } from '@/store/useBattleMatches';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import GlassyCard from '@/components/common/GlassyCard';
-import FinishBattle from '../components/FinishBattle';
+import FinishBattle from '@/components/FinishBattle';
+import toast from 'react-hot-toast';
+import { APP_ROUTES } from '@/constants/app-routes';
 
 const Battle = () => {
   const params = useParams();
+  const router = useRouter();
   const battleId = params?.battleId;
   const { setBattle, toggleFinishBattleModal } = useBattle();
   const { setBattleMatches } = useBattleMatches();
@@ -24,11 +27,14 @@ const Battle = () => {
     setShowAddMatchForm((prevState) => !prevState);
   };
 
-  const { loading: fetchingBattle, executeFunction: getBattleDetails } =
-    useNetworkRequest({
-      apiFunction: getBattleDetailsAPI,
-      initialLoader: true,
-    });
+  const {
+    loading: fetchingBattle,
+    errorMessage: fetchingBattleError,
+    executeFunction: getBattleDetails,
+  } = useNetworkRequest({
+    apiFunction: getBattleDetailsAPI,
+    initialLoader: true,
+  });
   const {
     data: matches,
     loading: fetchingBattleMatches,
@@ -53,6 +59,14 @@ const Battle = () => {
       fetchBattleDetails();
     }
   }, [battleId]);
+  useEffect(() => {
+    if (fetchingBattleError) {
+      toast.error(fetchingBattleError);
+      setTimeout(() => {
+        router.replace(APP_ROUTES.BATTLES.LIST);
+      }, 1000);
+    }
+  }, [fetchingBattleError]);
   return (
     <MainLayout>
       {fetchingBattle || fetchingBattleMatches ? (
@@ -72,22 +86,24 @@ const Battle = () => {
           </div>
         </>
       )}
-      <div className='fixed px-2 right-0 w-full bottom-0 bg-white/10 backdrop-blur-md border-b border-white/20 shadow-md py-2 flex justify-center items-center gap-2'>
-        <Button
-          variant='secondary'
-          className='flex items-center justify-center gap-1 md:max-w-[240px] w-1/2 py-4 uppercase !font-bold'
-          onClick={toggleAddMatchForm}
-        >
-          <IoMdAdd /> Add Match
-        </Button>
-        <Button
-          variant='success'
-          className='md:max-w-[240px] w-1/2 py-4 uppercase !font-bold'
-          onClick={toggleFinishBattleModal}
-        >
-          Finish Battle
-        </Button>
-      </div>
+      {fetchingBattle || fetchingBattleError ? null : (
+        <div className='fixed px-2 right-0 w-full bottom-0 bg-white/10 backdrop-blur-md border-b border-white/20 shadow-md py-2 flex justify-center items-center gap-2'>
+          <Button
+            variant='secondary'
+            className='flex items-center justify-center gap-1 md:max-w-[240px] w-1/2 py-4 uppercase !font-bold'
+            onClick={toggleAddMatchForm}
+          >
+            <IoMdAdd /> Add Match
+          </Button>
+          <Button
+            variant='success'
+            className='md:max-w-[240px] w-1/2 py-4 uppercase !font-bold'
+            onClick={toggleFinishBattleModal}
+          >
+            Finish Battle
+          </Button>
+        </div>
+      )}
       <MatchForm
         fetchBattleMatches={fetchBattleMatches}
         isOpen={showAddMatchForm}

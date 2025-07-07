@@ -1,15 +1,14 @@
 'use client';
 
-import { FaCrown } from 'react-icons/fa6';
 import { GiBroom } from 'react-icons/gi';
-import { useBattleMatches } from '../store/useBattleMatches';
-import PlayerCard from './matches/PlayerCard';
-import PlayerImage from './matches/PlayerImage';
+import { useBattleMatches } from '@/store/useBattleMatches';
+import PlayerImage from '@/components/matches/PlayerImage';
 
 const BattleSummary = () => {
   const { battleMatches } = useBattleMatches();
 
-  if (!battleMatches || battleMatches.length === 0) return null;
+  if (!battleMatches || battleMatches.length === 0)
+    return <p className='my-4'>No matches added.</p>;
 
   const player1 = battleMatches[0].player1;
   const player2 = battleMatches[0].player2;

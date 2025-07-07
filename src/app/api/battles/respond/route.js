@@ -4,7 +4,7 @@ import dbConnect from '@/lib/mongoose';
 import Battle from '@/models/Battle';
 import Pusher from 'pusher';
 import { cookies } from 'next/headers';
-import { BATTLE_STATUSES } from '../../../../constants';
+import { BATTLE_STATUSES } from '@/constants';
 
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -55,6 +55,7 @@ export async function PATCH(req) {
       { status: 404 }
     );
   }
+
   const requesterId = battle?.requester?.id?.toString();
   const acceptorId = battle?.acceptor?.id?.toString();
 
@@ -65,23 +66,30 @@ export async function PATCH(req) {
     );
   }
 
+  // 🚫 Prevent finishing an already finished battle
+  if (action === 'finish' && battle.status === BATTLE_STATUSES.FINISHED) {
+    return NextResponse.json(
+      { success: false, error: 'Battle is already finished.' },
+      { status: 400 }
+    );
+  }
+
   if (['accept', 'finish'].includes(action)) {
-    let requestStatus = BATTLE_STATUSES.IN_MATCH;
-    if (action === 'finish') {
-      requestStatus = BATTLE_STATUSES.FINISHED;
-    }
-    battle.status = requestStatus;
+    const newStatus =
+      action === 'accept' ? BATTLE_STATUSES.IN_MATCH : BATTLE_STATUSES.FINISHED;
 
     await Battle.updateOne(
       { _id: requestId },
-      { $set: { status: requestStatus }, $unset: { expiresAt: 1 } }
+      { $set: { status: newStatus }, $unset: { expiresAt: 1 } }
     );
+
+    battle.status = newStatus;
   } else {
     battle.status = BATTLE_STATUSES.REJECTED;
     await battle.save();
   }
 
-  // Notify requester via Pusher
+  // 🔔 Notify requester via Pusher
   await pusher.trigger(
     `private-user-${requesterId}`,
     'battle-request-updated',

@@ -16,14 +16,7 @@ export const loginUserAPI = async (payload) => {
     throw new Error(error?.message);
   }
 };
-export const fetchUserProfile = async () => {
-  try {
-    const response = await api.get('/auth/me');
-    return response;
-  } catch (error) {
-    throw new Error(error?.message);
-  }
-};
+
 export const uploadProfileImage = async (payload) => {
   try {
     const response = api.post('/upload-file', payload, {
@@ -52,9 +45,11 @@ export const fetchAllUsersAPI = async () => {
     throw new Error(error?.message);
   }
 };
-export const fetchYourBattleRequestsAPI = async () => {
+export const fetchYourBattleRequestsAPI = async (status = '') => {
   try {
-    const response = await api.get('/battles/list');
+    const response = await api.get(
+      `/battles/list${status ? `?status=${status}` : ''}`
+    );
     return response?.data;
   } catch (error) {
     throw new Error(error?.message);
@@ -99,6 +94,22 @@ export const fetchDashboardDataAPI = async ({ date, opponentId }) => {
       date,
       opponentId,
     });
+    return response?.data;
+  } catch (error) {
+    throw new Error(error?.response?.data?.error || error.message);
+  }
+};
+export const fetchLoggedInUserAPI = async () => {
+  try {
+    const response = await api.get('/user');
+    return response?.data;
+  } catch (error) {
+    throw new Error(error?.response?.data?.error || error.message);
+  }
+};
+export const updateLoggedInUserAPI = async (payload) => {
+  try {
+    const response = await api.patch('/user/update', payload);
     return response?.data;
   } catch (error) {
     throw new Error(error?.response?.data?.error || error.message);

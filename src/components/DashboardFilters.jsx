@@ -1,8 +1,8 @@
-import { useAllUsers } from '../store/useAllUsers';
-import { useDashboardStats } from '../store/useDashboardStats';
-import { useToggleComparisonModal } from '../store/useToggleComparisonModal';
-import CustomDatePicker from './common/CustomDatePicker';
-import PlayerImage from './matches/PlayerImage';
+import { useAllUsers } from '@/store/useAllUsers';
+import { useDashboardStats } from '@/store/useDashboardStats';
+import { useToggleComparisonModal } from '@/store/useToggleComparisonModal';
+import CustomDatePicker from '@/components/common/CustomDatePicker';
+import PlayerImage from '@/components/matches/PlayerImage';
 
 const DashboardFilters = () => {
   const { allUsers } = useAllUsers();
@@ -18,14 +18,14 @@ const DashboardFilters = () => {
   const opponentPlayerName = selectedOpponentPlayer?.name?.split(' ')?.[0];
   return (
     <div className='flex flex-col justify-center items-center'>
-      <div className='flex justify-center gap-2 rounded p-3 items-center'>
+      <div className='flex justify-center gap-2 rounded p-3 items-stretch'>
         <div className='w-1/2'>
           <CustomDatePicker startDate={statsDate} setStartDate={setStatsDate} />
         </div>
 
         <button
           onClick={toggleComparisonModal}
-          className='w-1/2 !bg-black/50 backdrop-blur-sm text-white placeholder-black/70 border-none rounded-xl text-center h-12 cursor-pointer flex justify-center gap-2 items-center'
+          className='w-1/2 !bg-black/50 backdrop-blur-sm text-white border border-white/50 placeholder-black/70 rounded-xl text-center cursor-pointer flex justify-center gap-2 items-center'
         >
           {selectedOpponent ? (
             <PlayerImage

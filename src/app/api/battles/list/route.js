@@ -3,11 +3,11 @@ import { cookies } from 'next/headers';
 import dbConnect from '@/lib/mongoose';
 import Battle from '@/models/Battle';
 import jwt from 'jsonwebtoken';
-import { BATTLE_STATUSES } from '../../../../constants';
+import { BATTLE_STATUSES } from '@/constants';
 
-const JWT_SECRET = process.env.JWT_ACCESS_SECRET; // Ensure this is defined in your .env
+const JWT_SECRET = process.env.JWT_ACCESS_SECRET;
 
-export async function GET() {
+export async function GET(req) {
   await dbConnect();
 
   const cookieStore = await cookies();
@@ -32,6 +32,15 @@ export async function GET() {
 
   const playerId = user.userId;
 
+  // Extract status from query param
+  const { searchParams } = new URL(req.url);
+  const statusQuery = searchParams.get('status');
+
+  // Handle optional single or multiple status values
+  const statusArray = statusQuery
+    ? statusQuery.split(',') // e.g. status=REQUESTED,IN_MATCH
+    : [BATTLE_STATUSES.REQUESTED, BATTLE_STATUSES.IN_MATCH];
+
   try {
     const battleRequests = await Battle.find({
       $and: [
@@ -39,9 +48,7 @@ export async function GET() {
           $or: [{ 'requester.id': playerId }, { 'acceptor.id': playerId }],
         },
         {
-          status: {
-            $in: [BATTLE_STATUSES.REQUESTED, BATTLE_STATUSES.IN_MATCH],
-          },
+          status: { $in: statusArray },
         },
       ],
     }).sort({ createdAt: -1 });

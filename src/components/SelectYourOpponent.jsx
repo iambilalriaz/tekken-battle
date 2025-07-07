@@ -8,8 +8,8 @@ import GlassyModal from '@/components/common/GlassyModal';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import Loader from '@/components/common/Loader';
-import { fetchYourBattleRequestsAPI } from '../lib/api';
-import { useBattleRequests } from '../store/useBattleRequests';
+import { fetchYourBattleRequestsAPI } from '@/lib/api';
+import { useBattleRequests } from '@/store/useBattleRequests';
 
 const SelectYourOpponent = () => {
   const router = useRouter();
