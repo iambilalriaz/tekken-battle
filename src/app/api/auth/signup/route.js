@@ -4,7 +4,6 @@ import bcrypt from 'bcryptjs';
 import { passwordRegex } from '@/constants';
 import { NextResponse } from 'next/server';
 import { loginUser } from '@/lib/auth/loginUser';
-import { cookies } from 'next/headers';
 
 export async function POST(req) {
   try {
@@ -56,12 +55,6 @@ export async function POST(req) {
     });
 
     const { accessToken } = await loginUser(email, password);
-    cookies().set('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-    });
 
     return NextResponse.json(
       {

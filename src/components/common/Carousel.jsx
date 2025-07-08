@@ -5,11 +5,8 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import GlassyCard from './GlassyCard';
 import { useSwipeable } from 'react-swipeable';
 import CustomDatePicker from './CustomDatePicker';
-import { useToggleComparisonModal } from '../../store/useToggleComparisonModal';
-import OutlineButton from './OutlineButton';
-import { useAllUsers } from '../../store/useAllUsers';
-import Button from './Button';
-import PlayerImage from '../matches/PlayerImage';
+import { useToggleComparisonModal } from '@/store/useToggleComparisonModal';
+import { useAllUsers } from '@/store/useAllUsers';
 
 const Carousel = ({
   items,

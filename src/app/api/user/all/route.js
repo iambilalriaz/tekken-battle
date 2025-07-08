@@ -2,14 +2,14 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongoose';
 import User from '@/models/User';
 import jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers';
+import { getAccessTokenFromHeaders } from '@/lib/helpers';
 
 const JWT_SECRET = process.env.JWT_ACCESS_SECRET; // Ensure this is defined in your .env
 
-export async function GET() {
+export async function GET(req) {
   await dbConnect();
 
-  const token = await cookies()?.get('accessToken')?.value;
+  const token = getAccessTokenFromHeaders(req);
   if (!token) {
     return NextResponse.json(
       { success: false, data: null, error: 'Unauthorized' },
@@ -28,6 +28,15 @@ export async function GET() {
   }
 
   const userId = user.userId;
+
+  const userExists = await User.findById(userId);
+  if (!userExists) {
+    return NextResponse.json(
+      { error: 'Unauthorized: User no longer exists.' },
+      { status: 401 }
+    );
+  }
+
   try {
     const users = await User.find({ _id: { $ne: userId } })
       .select('firstName lastName email profileImageUrl')

@@ -5,7 +5,7 @@ export const registerUserAPI = async (formData) => {
     const response = await api.post('/auth/signup', formData);
     return response?.data;
   } catch (error) {
-    throw new Error(error?.message);
+    throw error;
   }
 };
 export const loginUserAPI = async (payload) => {
@@ -13,7 +13,7 @@ export const loginUserAPI = async (payload) => {
     const response = await api.post('/auth/login', payload);
     return response?.data;
   } catch (error) {
-    throw new Error(error?.message);
+    throw error;
   }
 };
 
@@ -26,23 +26,16 @@ export const uploadProfileImage = async (payload) => {
     });
     return response;
   } catch (error) {
-    throw new Error(error?.message);
+    throw error;
   }
 };
-export const logoutUserAPI = async () => {
-  try {
-    const response = await api.post('/auth/logout');
-    return response;
-  } catch (error) {
-    throw new Error(error?.message);
-  }
-};
+
 export const fetchAllUsersAPI = async () => {
   try {
     const response = await api.get('/user/all');
     return response?.data;
   } catch (error) {
-    throw new Error(error?.message);
+    throw error;
   }
 };
 export const fetchYourBattleRequestsAPI = async (status = '') => {
@@ -52,7 +45,7 @@ export const fetchYourBattleRequestsAPI = async (status = '') => {
     );
     return response?.data;
   } catch (error) {
-    throw new Error(error?.message);
+    throw error;
   }
 };
 export const respondToBattleRequestAPI = async (payload) => {
@@ -60,7 +53,7 @@ export const respondToBattleRequestAPI = async (payload) => {
     const response = await api.patch('/battles/respond', payload);
     return response?.data;
   } catch (error) {
-    throw new Error(error?.message);
+    throw error;
   }
 };
 export const getBattleDetailsAPI = async (battleId) => {
@@ -69,7 +62,7 @@ export const getBattleDetailsAPI = async (battleId) => {
 
     return response?.data;
   } catch (error) {
-    throw new Error(error?.message);
+    throw error;
   }
 };
 export const addNewMatchAPI = async (battleId, payload) => {
@@ -77,7 +70,7 @@ export const addNewMatchAPI = async (battleId, payload) => {
     const response = await api.post(`/battles/${battleId}/match/add`, payload);
     return response?.data;
   } catch (error) {
-    throw new Error(error?.message);
+    throw error;
   }
 };
 export const fetchBattleMatchesAPI = async (battleId) => {
@@ -85,7 +78,7 @@ export const fetchBattleMatchesAPI = async (battleId) => {
     const response = await api.get(`/battles/${battleId}/match/list`);
     return response?.data;
   } catch (error) {
-    throw new Error(error?.message);
+    throw error;
   }
 };
 export const fetchDashboardDataAPI = async ({ date, opponentId }) => {
@@ -96,7 +89,7 @@ export const fetchDashboardDataAPI = async ({ date, opponentId }) => {
     });
     return response?.data;
   } catch (error) {
-    throw new Error(error?.response?.data?.error || error.message);
+    throw error;
   }
 };
 export const fetchLoggedInUserAPI = async () => {
@@ -104,7 +97,7 @@ export const fetchLoggedInUserAPI = async () => {
     const response = await api.get('/user');
     return response?.data;
   } catch (error) {
-    throw new Error(error?.response?.data?.error || error.message);
+    throw error;
   }
 };
 export const updateLoggedInUserAPI = async (payload) => {
@@ -112,6 +105,6 @@ export const updateLoggedInUserAPI = async (payload) => {
     const response = await api.patch('/user/update', payload);
     return response?.data;
   } catch (error) {
-    throw new Error(error?.response?.data?.error || error.message);
+    throw error;
   }
 };

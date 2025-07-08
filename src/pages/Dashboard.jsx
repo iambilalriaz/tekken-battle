@@ -20,9 +20,11 @@ import Button from '@/components/common/Button';
 import { useSelectOpponentModal } from '@/store/useSelectOpponentModal';
 import SelectYourOpponent from '@/components/SelectYourOpponent';
 import { useExportImage } from '@/hooks/useExportImage';
+import { getAccessToken } from '../lib/helpers';
 
 const Dashboard = () => {
   const { loggedInUser } = useLoggedInUser();
+  const accessToken = getAccessToken();
   const { setAllUsers } = useAllUsers();
   const { toggleOpponentSelectionModal } = useSelectOpponentModal();
 
@@ -52,9 +54,11 @@ const Dashboard = () => {
   }, [fetchingStatusError]);
 
   const fetchUsers = useCallback(async () => {
-    const users = await fetchAllUsers();
-    setAllUsers(users);
-    setSelectedOpponent(users?.[0]?.userId);
+    if (accessToken) {
+      const users = await fetchAllUsers();
+      setAllUsers(users);
+      setSelectedOpponent(users?.[0]?.userId);
+    }
   }, []);
 
   const fetchDashboardStats = async () => {

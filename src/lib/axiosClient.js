@@ -1,4 +1,6 @@
+'use client';
 import axios from 'axios';
+import { getAccessToken } from '@/lib/helpers';
 
 const axiosClient = axios.create({
   baseURL: '/api',
@@ -7,6 +9,21 @@ const axiosClient = axios.create({
   },
   withCredentials: true, // Optional: set based on your auth requirements
 });
+
+// Add interceptor for injecting Authorization header
+axiosClient.interceptors.request.use(
+  (config) => {
+    const token = getAccessToken();
+
+    // Only add Authorization header if token exists
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 const api = {
   get: async (url, config = {}) => {
@@ -56,8 +73,13 @@ const api = {
 
 function handleError(error) {
   if (error.response) {
-    console.error('API Error:', error.response.data);
-    throw new Error(error.response.data?.error || 'API Error');
+    const statusCode = error?.response?.status;
+
+    console.log('API Error:', error.response.data);
+    throw {
+      errorCode: statusCode,
+      errorMessage: error.response.data?.error || 'API Error',
+    };
   } else if (error.request) {
     console.error('No response received from API:', error.request);
     throw new Error('No response from server.');

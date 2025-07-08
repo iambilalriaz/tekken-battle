@@ -6,7 +6,7 @@ import { FaChevronDown } from 'react-icons/fa';
 import { APP_ROUTES } from '@/constants/app-routes';
 import { useLoggedInUser } from '@/hooks/useLoggedInUser';
 import { usePathname, useRouter } from 'next/navigation';
-import { logoutUserAPI } from '@/lib/api';
+import { deleteAccessToken } from '@/lib/helpers';
 
 const NAVBAR_LINKS = [
   { path: APP_ROUTES.DASHBOARD, label: 'Dashboard' },
@@ -29,7 +29,7 @@ const Navbar = () => {
   };
 
   const onLogoutUser = async () => {
-    await logoutUserAPI();
+    deleteAccessToken();
     resetLoggedInUser();
     router.push(APP_ROUTES.LOGIN);
   };

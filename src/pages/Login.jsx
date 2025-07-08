@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
 import toast from 'react-hot-toast';
 import { useLoggedInUser } from '@/hooks/useLoggedInUser';
+import { saveAccessToken } from '@/lib/helpers';
 
 const Login = () => {
   const router = useRouter();
@@ -41,6 +42,7 @@ const Login = () => {
     const { email, password } = data;
     const response = await loginUser({ email, password });
     setLoggedInUser(response?.user);
+    saveAccessToken(response?.accessToken);
 
     reset();
     router.replace(APP_ROUTES.DASHBOARD);

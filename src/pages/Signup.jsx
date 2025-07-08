@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { APP_ROUTES } from '@/constants/app-routes';
 import { useLoggedInUser } from '@/hooks/useLoggedInUser';
 import { useUploadImage } from '@/hooks/useUploadImage';
+import { saveAccessToken } from '@/lib/helpers';
 
 const Signup = () => {
   const router = useRouter();
@@ -65,6 +66,8 @@ const Signup = () => {
         };
         const response = await registerUser(userPayload);
         setLoggedInUser(response?.user);
+        saveAccessToken(response?.accessToken);
+
         reset();
 
         router.replace(APP_ROUTES.DASHBOARD);

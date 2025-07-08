@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import Pusher from 'pusher';
 import jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers';
+import { getAccessTokenFromHeaders } from '@/lib/helpers';
 
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -20,8 +20,8 @@ export async function POST(req) {
   const socketId = params.get('socket_id');
   const channelName = params.get('channel_name');
 
-  const cookiesData = await cookies();
-  const token = cookiesData?.get('accessToken')?.value;
+  const token = getAccessTokenFromHeaders(req);
+
   if (!token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

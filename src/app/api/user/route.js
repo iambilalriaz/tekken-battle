@@ -1,16 +1,15 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import dbConnect from '@/lib/mongoose';
 import User from '@/models/User';
+import { getAccessTokenFromHeaders } from '@/lib/helpers';
 
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 
-export async function GET() {
+export async function GET(req) {
   await dbConnect();
 
-  const cookieStore = cookies();
-  const token = cookieStore.get('accessToken')?.value;
+  const token = getAccessTokenFromHeaders(req);
 
   if (!token) {
     return NextResponse.json(
@@ -30,7 +29,13 @@ export async function GET() {
   }
 
   const userId = user?.userId;
-
+  const userExists = await User.findById(userId);
+  if (!userExists) {
+    return NextResponse.json(
+      { error: 'Unauthorized: User no longer exists.' },
+      { status: 401 }
+    );
+  }
   try {
     const user = await User.findById(userId).select(
       'firstName lastName email profileImageUrl totalMatches gamesWon cleanSweaps perfects'
@@ -43,7 +48,23 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json({ success: true, data: user }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          id: user._id.toString(),
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          profileImageUrl: user.profileImageUrl,
+          totalMatches: user.totalMatches,
+          gamesWon: user.gamesWon,
+          cleanSweaps: user.cleanSweaps,
+          perfects: user.perfects,
+        },
+      },
+      { status: 200 }
+    );
   } catch (err) {
     return NextResponse.json(
       { success: false, data: null, error: 'Server error' },

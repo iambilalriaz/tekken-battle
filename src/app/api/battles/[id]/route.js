@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongoose';
 import Battle from '@/models/Battle';
-import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
+import { getAccessTokenFromHeaders } from '@/lib/helpers';
+import User from '@/models/User';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,8 +15,7 @@ export async function GET(req, context) {
 
   await dbConnect();
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get('accessToken')?.value;
+  const token = getAccessTokenFromHeaders(req);
 
   if (!token) {
     return NextResponse.json(
@@ -30,6 +30,14 @@ export async function GET(req, context) {
   } catch (err) {
     return NextResponse.json(
       { success: false, error: 'Invalid or expired token' },
+      { status: 401 }
+    );
+  }
+
+  const userExists = await User.findById(user?.userId);
+  if (!userExists) {
+    return NextResponse.json(
+      { error: 'Unauthorized: User no longer exists.' },
       { status: 401 }
     );
   }

@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import Pusher from 'pusher';
 import jwt from 'jsonwebtoken';
 import Battle from '@/models/Battle';
 import dbConnect from '@/lib/mongoose';
 import User from '@/models/User';
 import { BATTLE_STATUSES } from '@/constants';
+import { getAccessTokenFromHeaders } from '@/lib/helpers';
 
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -20,7 +20,7 @@ const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 export async function POST(req) {
   await dbConnect();
 
-  const token = cookies().get('accessToken')?.value;
+  const token = getAccessTokenFromHeaders(req);
   if (!token) {
     return NextResponse.json(
       { success: false, data: null, error: 'Unauthorized' },

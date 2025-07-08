@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import dbConnect from '@/lib/mongoose';
 import Battle from '@/models/Battle';
 import jwt from 'jsonwebtoken';
 import { BATTLE_STATUSES } from '@/constants';
+import { getAccessTokenFromHeaders } from '@/lib/helpers';
+import User from '@/models/User';
 
 const JWT_SECRET = process.env.JWT_ACCESS_SECRET;
 
 export async function GET(req) {
   await dbConnect();
 
-  const cookieStore = await cookies();
-  const token = cookieStore?.get('accessToken')?.value;
+  const token = getAccessTokenFromHeaders(req);
 
   if (!token) {
     return NextResponse.json(
@@ -31,7 +31,13 @@ export async function GET(req) {
   }
 
   const playerId = user.userId;
-
+  const userExists = await User.findById(playerId);
+  if (!userExists) {
+    return NextResponse.json(
+      { error: 'Unauthorized: User no longer exists.' },
+      { status: 401 }
+    );
+  }
   // Extract status from query param
   const { searchParams } = new URL(req.url);
   const statusQuery = searchParams.get('status');

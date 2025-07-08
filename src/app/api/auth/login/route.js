@@ -1,5 +1,4 @@
 import dbConnect from '@/lib/mongoose';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { loginUser } from '@/lib/auth/loginUser';
 
@@ -11,14 +10,6 @@ export async function POST(req) {
     await dbConnect();
 
     const { user, accessToken } = await loginUser(email, password);
-
-    // Store refresh token in secure HttpOnly cookie
-    await cookies().set('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-    });
 
     return NextResponse.json(
       {

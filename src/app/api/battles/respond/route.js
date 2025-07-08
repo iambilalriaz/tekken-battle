@@ -3,8 +3,9 @@ import jwt from 'jsonwebtoken';
 import dbConnect from '@/lib/mongoose';
 import Battle from '@/models/Battle';
 import Pusher from 'pusher';
-import { cookies } from 'next/headers';
 import { BATTLE_STATUSES } from '@/constants';
+import { getAccessTokenFromHeaders } from '@/lib/helpers';
+import User from '@/models/User';
 
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -19,7 +20,7 @@ const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 export async function PATCH(req) {
   await dbConnect();
 
-  const token = cookies()?.get('accessToken')?.value;
+  const token = getAccessTokenFromHeaders(req);
 
   if (!token) {
     return NextResponse.json(
@@ -35,6 +36,13 @@ export async function PATCH(req) {
   } catch {
     return NextResponse.json(
       { success: false, error: 'Invalid or expired token' },
+      { status: 401 }
+    );
+  }
+  const userExists = await User.findById(user?.userId);
+  if (!userExists) {
+    return NextResponse.json(
+      { error: 'Unauthorized: User no longer exists.' },
       { status: 401 }
     );
   }

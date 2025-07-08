@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongoose';
 import Battle from '@/models/Battle';
 import Match from '@/models/Match';
-import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import { BATTLE_STATUSES } from '@/constants';
+import { getAccessTokenFromHeaders } from '@/lib/helpers';
+import User from '@/models/User';
 
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 
@@ -22,8 +23,7 @@ export async function POST(req) {
       );
     }
 
-    const cookieStore = cookies();
-    const token = cookieStore.get('accessToken')?.value;
+    const token = getAccessTokenFromHeaders(req);
 
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -40,6 +40,14 @@ export async function POST(req) {
     }
 
     const currentUserId = user.userId;
+
+    const userExists = await User.findById(currentUserId);
+    if (!userExists) {
+      return NextResponse.json(
+        { error: 'Unauthorized: User no longer exists.' },
+        { status: 401 }
+      );
+    }
 
     // Setup date filter
     const parsedDate = new Date(date);

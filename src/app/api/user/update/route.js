@@ -1,16 +1,15 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import dbConnect from '@/lib/mongoose';
 import User from '@/models/User';
+import { getAccessTokenFromHeaders } from '@/lib/helpers';
 
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 
 export async function PATCH(req) {
   await dbConnect();
 
-  const cookieStore = cookies();
-  const token = cookieStore.get('accessToken')?.value;
+  const token = getAccessTokenFromHeaders(req);
 
   if (!token) {
     return NextResponse.json(
@@ -30,6 +29,14 @@ export async function PATCH(req) {
   }
 
   const userId = user?.userId;
+
+  const userExists = await User.findById(userId);
+  if (!userExists) {
+    return NextResponse.json(
+      { error: 'Unauthorized: User no longer exists.' },
+      { status: 401 }
+    );
+  }
   const body = await req.json();
 
   try {
