@@ -12,9 +12,12 @@ import toast from 'react-hot-toast';
 import { fetchYourBattleRequestsAPI } from '@/lib/api';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
 import { getAccessToken } from '@/lib/helpers';
+import { useLogoutCustomer } from '@/hooks/useLogoutCustomer';
 
 const MainLayout = ({ children }) => {
   const { loggedInUser } = useLoggedInUser();
+  const { logoutCustomer } = useLogoutCustomer();
+
   const pathname = usePathname();
   const accessToken = getAccessToken();
   const { battleRequests, setBattleRequests } = useBattleRequests();
@@ -75,7 +78,7 @@ const MainLayout = ({ children }) => {
         pusher.disconnect();
       };
     } else if (!NON_AUTHORIZED_PAGES?.includes(pathname)) {
-      setTimeout(() => router.replace(APP_ROUTES.LOGIN), 500);
+      logoutCustomer();
     }
   }, [
     JSON.stringify(loggedInUser),

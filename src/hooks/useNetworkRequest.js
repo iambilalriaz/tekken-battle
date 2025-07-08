@@ -1,16 +1,12 @@
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { APP_ROUTES } from '../constants/app-routes';
-import { deleteAccessToken } from '../lib/helpers';
-import { useLoggedInUser } from './useLoggedInUser';
+import { useLogoutCustomer } from '@/hooks/useLogoutCustomer';
 
 export const useNetworkRequest = ({
   initialLoader = false,
   apiFunction,
   initialData = null,
 }) => {
-  const router = useRouter();
-  const { resetLoggedInUser } = useLoggedInUser();
+  const { logoutCustomer } = useLogoutCustomer();
 
   const [loading, setLoading] = useState(initialLoader);
   const [data, setData] = useState(initialData);
@@ -28,11 +24,7 @@ export const useNetworkRequest = ({
       const errorCode = error?.errorCode;
 
       if (errorCode === 401) {
-        deleteAccessToken();
-        resetLoggedInUser();
-        setTimeout(() => {
-          router.replace(APP_ROUTES.LOGIN);
-        }, 5000);
+        logoutCustomer();
       }
       setError(errorMessage);
       throw new Error(errorMessage);

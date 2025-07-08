@@ -6,7 +6,7 @@ import { FaChevronDown } from 'react-icons/fa';
 import { APP_ROUTES } from '@/constants/app-routes';
 import { useLoggedInUser } from '@/hooks/useLoggedInUser';
 import { usePathname, useRouter } from 'next/navigation';
-import { deleteAccessToken } from '@/lib/helpers';
+import { useLogoutCustomer } from '@/hooks/useLogoutCustomer';
 
 const NAVBAR_LINKS = [
   { path: APP_ROUTES.DASHBOARD, label: 'Dashboard' },
@@ -15,7 +15,8 @@ const NAVBAR_LINKS = [
 ];
 
 const Navbar = () => {
-  const { loggedInUser, resetLoggedInUser } = useLoggedInUser();
+  const { logoutCustomer } = useLogoutCustomer();
+  const { loggedInUser } = useLoggedInUser();
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -26,12 +27,6 @@ const Navbar = () => {
     } else {
       router.push(APP_ROUTES.LOGIN);
     }
-  };
-
-  const onLogoutUser = async () => {
-    deleteAccessToken();
-    resetLoggedInUser();
-    router.push(APP_ROUTES.LOGIN);
   };
 
   useEffect(() => {
@@ -92,7 +87,7 @@ const Navbar = () => {
               <li className='hover:font-medium text-sm'>
                 <Link
                   href={APP_ROUTES.LOGIN}
-                  onClick={onLogoutUser}
+                  onClick={logoutCustomer}
                   className='block w-full px-2 py-1 rounded hover:bg-gray-100'
                 >
                   Logout

@@ -5,7 +5,6 @@ export const getAccessTokenFromHeaders = (req) => {
 };
 
 export const saveAccessToken = (token) => {
-  debugger;
   if (typeof localStorage === 'undefined') {
     return;
   }
