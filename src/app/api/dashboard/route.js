@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongoose';
 import Battle from '@/models/Battle';
+import Match from '@/models/Match';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import { BATTLE_STATUSES } from '@/constants';

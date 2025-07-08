@@ -3,14 +3,17 @@ import { useDashboardStats } from '@/store/useDashboardStats';
 import { useToggleComparisonModal } from '@/store/useToggleComparisonModal';
 import CustomDatePicker from '@/components/common/CustomDatePicker';
 import PlayerImage from '@/components/matches/PlayerImage';
+import { RiExportFill } from 'react-icons/ri';
+import Loader from '@/components/common/Loader';
+import clsx from 'clsx';
 
-const DashboardFilters = () => {
+const DashboardFilters = ({ handleExport, isExporting }) => {
   const { allUsers } = useAllUsers();
 
   const { selectedOpponent, toggleComparisonModal } =
     useToggleComparisonModal();
 
-  const { statsDate, setStatsDate } = useDashboardStats();
+  const { statsDate, setStatsDate, dashboardStats } = useDashboardStats();
 
   const selectedOpponentPlayer = allUsers?.find(
     (user) => user?.userId === selectedOpponent
@@ -19,13 +22,16 @@ const DashboardFilters = () => {
   return (
     <div className='flex flex-col justify-center items-center'>
       <div className='flex justify-center gap-2 rounded p-3 items-stretch'>
-        <div className='w-1/2'>
+        <div className={clsx(dashboardStats ? 'w-2/5' : 'w-1/2')}>
           <CustomDatePicker startDate={statsDate} setStartDate={setStatsDate} />
         </div>
 
         <button
           onClick={toggleComparisonModal}
-          className='w-1/2 !bg-black/50 backdrop-blur-sm text-white border border-white/50 placeholder-black/70 rounded-xl text-center cursor-pointer flex justify-center gap-2 items-center'
+          className={clsx(
+            '!bg-black/50 backdrop-blur-sm text-white border border-white/50 placeholder-black/70 rounded-xl text-center cursor-pointer flex justify-center gap-2 items-center',
+            dashboardStats ? 'w-2/5' : 'w-1/2'
+          )}
         >
           {selectedOpponent ? (
             <PlayerImage
@@ -39,6 +45,26 @@ const DashboardFilters = () => {
             {selectedOpponent ? opponentPlayerName : '-- Opponent --'}
           </p>
         </button>
+        <div
+          className={clsx(
+            'bg-black/50 backdrop-blur-sm text-white border border-white/50 placeholder-black/70 rounded-xl text-center cursor-pointer flex justify-center gap-2 items-center',
+            dashboardStats ? 'w-1/5 md:w-2/5' : 'hidden'
+          )}
+        >
+          {isExporting ? (
+            <Loader size='xs' />
+          ) : (
+            <div
+              className='w-full h-full flex justify-center gap-2 items-center text-secondary'
+              onClick={handleExport}
+            >
+              <p className='hidden md:block text-sm font-bold text-white'>
+                Export
+              </p>
+              <RiExportFill className='text-3xl md:text-xl' />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

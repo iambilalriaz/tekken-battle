@@ -19,6 +19,7 @@ import GlassyCard from '@/components/common/GlassyCard';
 import Button from '@/components/common/Button';
 import { useSelectOpponentModal } from '@/store/useSelectOpponentModal';
 import SelectYourOpponent from '@/components/SelectYourOpponent';
+import { useExportImage } from '@/hooks/useExportImage';
 
 const Dashboard = () => {
   const { loggedInUser } = useLoggedInUser();
@@ -29,11 +30,8 @@ const Dashboard = () => {
     useToggleComparisonModal();
   const { statsDate, setDashboardStats } = useDashboardStats();
 
-  const {
-    loading: fetchingUsers,
-    errorMessage: fetchingUsersError,
-    executeFunction: fetchAllUsers,
-  } = useNetworkRequest({ apiFunction: fetchAllUsersAPI, initialLoader: true });
+  const { loading: fetchingUsers, executeFunction: fetchAllUsers } =
+    useNetworkRequest({ apiFunction: fetchAllUsersAPI, initialLoader: true });
 
   const {
     data: dashboardStats,
@@ -41,6 +39,11 @@ const Dashboard = () => {
     errorMessage: fetchingStatusError,
     executeFunction: fetchStats,
   } = useNetworkRequest({ apiFunction: fetchDashboardDataAPI });
+  const formattedDate = dayjs(statsDate).format('YYYY-MM-DD');
+
+  const { componentRef, handleExport, isExporting } = useExportImage({
+    imageName: `tekken-battle-${formattedDate}`,
+  });
 
   useEffect(() => {
     if (fetchingStatusError) {
@@ -57,7 +60,7 @@ const Dashboard = () => {
   const fetchDashboardStats = async () => {
     if (statsDate && selectedOpponent) {
       const stats = await fetchStats({
-        date: dayjs(statsDate).format('YYYY-MM-DD'),
+        date: formattedDate,
         opponentId: selectedOpponent,
       });
       setDashboardStats(stats);
@@ -77,17 +80,22 @@ const Dashboard = () => {
         <Loader />
       ) : (
         <div className='bg-whte h- w-full'>
-          <DashboardFilters />
+          <DashboardFilters
+            handleExport={handleExport}
+            isExporting={isExporting}
+          />
           <div>
             {dashboardStats ? (
-              <PlayerComparisonSummary
-                data={dashboardStats}
-                currentUser={{
-                  id: loggedInUser?.id,
-                  name: `${loggedInUser?.firstName} ${loggedInUser?.lastName}`,
-                  profileImage: loggedInUser?.profileImageUrl,
-                }}
-              />
+              <div ref={componentRef}>
+                <PlayerComparisonSummary
+                  data={dashboardStats}
+                  currentUser={{
+                    id: loggedInUser?.id,
+                    name: `${loggedInUser?.firstName} ${loggedInUser?.lastName}`,
+                    profileImage: loggedInUser?.profileImageUrl,
+                  }}
+                />
+              </div>
             ) : (
               <GlassyCard styles='max-w-sm mx-auto'>
                 <p className='flex justify-center items-center max-w-sm text-center mx-auto'>

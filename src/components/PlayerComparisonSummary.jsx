@@ -10,25 +10,25 @@ const PlayerComparisonSummary = ({ data, currentUser }) => {
 
   if (!data || !currentUser) return null;
 
-  const { totalMatches, isDraw, winner, loser } = data;
+  const { totalMatches, isDraw, winner, loser } = data ?? {};
 
   const players = [
     {
-      id: winner.name === 'You' ? currentUser.id : 'opponent',
+      id: winner?.name === 'You' ? currentUser.id : 'opponent',
       ...winner,
       isWinner: !isDraw,
     },
     {
-      id: loser.name === 'You' ? currentUser.id : 'opponent',
+      id: loser?.name === 'You' ? currentUser.id : 'opponent',
       ...loser,
       isWinner: false,
     },
   ];
-
+  console.log('testing players', players);
   // Winner name display logic
   const headline = isDraw
     ? `It was a draw on ${dayjs(statsDate).format('DD MMM, YYYY')}`
-    : `${winner.name} dominated on ${dayjs(statsDate).format('DD MMM, YYYY')}`;
+    : `${winner?.name} dominated on ${dayjs(statsDate).format('DD MMM, YYYY')}`;
 
   return (
     <div className='mx-4 pb-20'>
@@ -41,13 +41,13 @@ const PlayerComparisonSummary = ({ data, currentUser }) => {
             {/* Desktop View */}
             <h3 className='text-xl mt-4 hidden md:block'>
               {totalMatches} matches played —{' '}
-              {!isDraw && `${winner.winPercentage}% win rate`}
+              {!isDraw && `${winner?.winPercentage}% win rate`}
             </h3>
 
             {/* Mobile View */}
             <div className='block md:hidden text-lg mt-4 font-semibold space-y-1'>
               <h3>— {totalMatches} matches played</h3>
-              {!isDraw && <h3>— {winner.winPercentage}% win rate</h3>}
+              {!isDraw && <h3>— {winner?.winPercentage}% win rate</h3>}
             </div>
           </div>
         </div>
@@ -56,7 +56,7 @@ const PlayerComparisonSummary = ({ data, currentUser }) => {
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 md:max-w-3/4 mx-auto'>
         {players.map((p) => (
           <div
-            key={p.id}
+            key={p.profileImage}
             className='rounded-xl p-6 relative bg-black/20 backdrop-blur border border-white/30'
           >
             <div className='flex items-center gap-4 mb-4'>
