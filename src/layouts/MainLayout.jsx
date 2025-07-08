@@ -75,7 +75,7 @@ const MainLayout = ({ children }) => {
         pusher.disconnect();
       };
     } else if (!NON_AUTHORIZED_PAGES?.includes(pathname)) {
-      router.replace(APP_ROUTES.LOGIN);
+      setTimeout(() => router.replace(APP_ROUTES.LOGIN), 500);
     }
   }, [
     JSON.stringify(loggedInUser),
