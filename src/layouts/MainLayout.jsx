@@ -32,6 +32,11 @@ const MainLayout = ({ children }) => {
   });
   const router = useRouter();
 
+  const playNotification = () => {
+    const audio = new Audio('/knock.mp3');
+    audio.play();
+  };
+
   useEffect(() => {
     if (accessToken) {
       const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
@@ -47,6 +52,7 @@ const MainLayout = ({ children }) => {
       const channel = pusher.subscribe(`private-user-${loggedInUser?.id}`);
       channel.bind('battle-request-received', async () => {
         setInvited(true);
+        playNotification();
         const data = await fetchYourBattleRequests(BATTLE_STATUSES.REQUESTED);
         setPendingInvites(data);
         setBattleRequests(data);

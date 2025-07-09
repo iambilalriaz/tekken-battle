@@ -1,3 +1,4 @@
+'ue client';
 import { toPng } from 'html-to-image';
 import { useRef, useState } from 'react';
 export const useExportImage = ({ imageName = 'exported-image' }) => {
@@ -9,14 +10,9 @@ export const useExportImage = ({ imageName = 'exported-image' }) => {
     setIsExporing(true);
     try {
       const dataUrl = await toPng(componentRef.current, {
-        cacheBust: true,
-        width: 420,
-        height: 800,
+        cacheBust: false, // disable if not needed
         style: {
-          width: '420px',
-          height: '800px',
-          padding: '1.5rem',
-          borderRadius: '12px',
+          paddingBlock: '1.5rem',
           backgroundColor: 'black',
         },
       });

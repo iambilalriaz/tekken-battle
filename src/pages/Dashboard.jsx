@@ -115,15 +115,17 @@ const Dashboard = () => {
       {comparisonModal && <SelectOpponentFilterModal />}
       <SelectYourOpponent />
       <div className='pb-24' />
-      <div className='fixed px-2 right-0 w-full bottom-0 bg-white/10 backdrop-blur-md border-b border-white/20 shadow-md py-2 flex justify-center items-center gap-2'>
-        <Button
-          variant='secondary'
-          className='flex items-center justify-center gap-1 md:max-w-[240px] w-full py-4 uppercase !font-bold'
-          onClick={toggleOpponentSelectionModal}
-        >
-          Challenge a Friend
-        </Button>
-      </div>
+      {accessToken ? (
+        <div className='fixed px-2 right-0 w-full bottom-0 bg-white/10 backdrop-blur-md border-b border-white/20 shadow-md py-2 flex justify-center items-center gap-2'>
+          <Button
+            variant='secondary'
+            className='flex items-center justify-center gap-1 md:max-w-[240px] w-full py-4 uppercase !font-bold'
+            onClick={toggleOpponentSelectionModal}
+          >
+            Challenge a Friend
+          </Button>
+        </div>
+      ) : null}
       <style>{`
       .react-datepicker-wrapper, .react-datepicker__input-container {
         width: 100%;
