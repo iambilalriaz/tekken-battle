@@ -2,14 +2,13 @@ import { usePathname, useRouter } from 'next/navigation';
 import { APP_ROUTES } from '@/constants/app-routes';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
 import { sendBattleRequestAPI } from '@/lib/pusher';
-import { useAllUsers } from '@/store/useAllUsers';
 import { useSelectOpponentModal } from '@/store/useSelectOpponentModal';
-import GlassyModal from '@/components/common/GlassyModal';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import Loader from '@/components/common/Loader';
 import { fetchYourBattleRequestsAPI } from '@/lib/api';
 import { useBattleRequests } from '@/store/useBattleRequests';
+import SelectOpponent from './SelectOpponent';
 
 const SelectYourOpponent = () => {
   const router = useRouter();
@@ -18,8 +17,6 @@ const SelectYourOpponent = () => {
     useSelectOpponentModal();
 
   const { setBattleRequests } = useBattleRequests();
-
-  const { allUsers } = useAllUsers();
 
   const {
     loading: sendingRequest,
@@ -53,31 +50,19 @@ const SelectYourOpponent = () => {
     }
   }, [sendingRequestError]);
   return (
-    <GlassyModal
-      isOpen={showOpponentSelectionModal}
-      onClose={toggleOpponentSelectionModal}
-      title='Select Your Opponent'
-    >
-      {sendingRequest || fetchingBattleRequests ? (
-        <div className='p-12'>
-          <p className='mb-4'>Creating session...</p>
-          <Loader />
-        </div>
-      ) : (
-        allUsers?.map((user) => (
-          <div
-            key={user?.userId}
-            className='flex items-center hover:bg-gray/20 active:bg-gray/20 cursor-pointer p-2 select-none animate__animated animate__rollIn faster'
-            onClick={() => createBattleRequest(user?.userId)}
-          >
-            <div className='w-10 h-10 rounded-full overflow-hidden border-4 border-white'>
-              <img src={user?.profileImage} width={50} height={50} />
-            </div>
-            <p className='font-semibold ml-3'>{user?.name}</p>
+    <SelectOpponent
+      showModal={showOpponentSelectionModal}
+      toggleModal={toggleOpponentSelectionModal}
+      loaderComponent={
+        sendingRequest || fetchingBattleRequests ? (
+          <div className='p-12'>
+            <p className='mb-4'>Creating session...</p>
+            <Loader />
           </div>
-        ))
-      )}
-    </GlassyModal>
+        ) : null
+      }
+      onSelectOpponent={createBattleRequest}
+    />
   );
 };
 

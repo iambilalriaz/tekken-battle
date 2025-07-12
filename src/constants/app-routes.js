@@ -3,6 +3,7 @@ export const APP_ROUTES = {
   LOGIN: '/login',
   DASHBOARD: '/dashboard',
   PROFILE: '/profile',
+  STATS: '/stats',
   BATTLES: {
     LIST: '/battles',
     RECORD: '/battles/:battleId',

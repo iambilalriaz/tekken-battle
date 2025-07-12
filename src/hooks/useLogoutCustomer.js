@@ -1,3 +1,4 @@
+'use client';
 import { useRouter } from 'next/navigation';
 import { deleteAccessToken } from '@/lib/helpers';
 import { useLoggedInUser } from '@/hooks/useLoggedInUser';

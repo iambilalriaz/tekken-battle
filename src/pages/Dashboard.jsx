@@ -3,16 +3,14 @@
 import Loader from '@/components/common/Loader';
 import { useLoggedInUser } from '@/hooks/useLoggedInUser';
 import MainLayout from '@/layouts/MainLayout';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
-import { fetchAllUsersAPI, fetchDashboardDataAPI } from '@/lib/api';
+import { fetchDashboardDataAPI } from '@/lib/api';
 import { useDashboardStats } from '@/store/useDashboardStats';
 
-import { useToggleComparisonModal } from '@/store/useToggleComparisonModal';
 import SelectOpponentFilterModal from '@/components/SelectOpponentFilterModal';
 import DashboardFilters from '@/components/DashboardFilters';
 import toast from 'react-hot-toast';
-import { useAllUsers } from '@/store/useAllUsers';
 import dayjs from 'dayjs';
 import PlayerComparisonSummary from '@/components/PlayerComparisonSummary';
 import GlassyCard from '@/components/common/GlassyCard';
@@ -20,20 +18,19 @@ import Button from '@/components/common/Button';
 import { useSelectOpponentModal } from '@/store/useSelectOpponentModal';
 import SelectYourOpponent from '@/components/SelectYourOpponent';
 import { useExportImage } from '@/hooks/useExportImage';
-import { getAccessToken } from '../lib/helpers';
+import { getAccessToken } from '@/lib/helpers';
+import { useSelectedOpponent } from '@/store/useSelectedOpponent';
+import { useSelectOpponentFilterModal } from '@/store/useSelectOpponentFilterModal';
 
 const Dashboard = () => {
   const { loggedInUser } = useLoggedInUser();
   const accessToken = getAccessToken();
-  const { setAllUsers } = useAllUsers();
-  const { toggleOpponentSelectionModal } = useSelectOpponentModal();
+  const { showOpponentSelectionModal, toggleOpponentSelectionModal } =
+    useSelectOpponentModal();
+  const { selectOpponentFilterModal } = useSelectOpponentFilterModal();
 
-  const { comparisonModal, selectedOpponent, setSelectedOpponent } =
-    useToggleComparisonModal();
+  const { selectedOpponent } = useSelectedOpponent();
   const { statsDate, setDashboardStats } = useDashboardStats();
-
-  const { loading: fetchingUsers, executeFunction: fetchAllUsers } =
-    useNetworkRequest({ apiFunction: fetchAllUsersAPI, initialLoader: true });
 
   const {
     data: dashboardStats,
@@ -53,14 +50,6 @@ const Dashboard = () => {
     }
   }, [fetchingStatusError]);
 
-  const fetchUsers = useCallback(async () => {
-    if (accessToken) {
-      const users = await fetchAllUsers();
-      setAllUsers(users);
-      setSelectedOpponent(users?.[0]?.userId);
-    }
-  }, []);
-
   const fetchDashboardStats = async () => {
     if (statsDate && selectedOpponent) {
       const stats = await fetchStats({
@@ -70,9 +59,6 @@ const Dashboard = () => {
       setDashboardStats(stats);
     }
   };
-  useEffect(() => {
-    fetchUsers();
-  }, []);
 
   useEffect(() => {
     fetchDashboardStats();
@@ -80,7 +66,7 @@ const Dashboard = () => {
 
   return (
     <MainLayout>
-      {fetchingUsers || fetchingStats ? (
+      {fetchingStats ? (
         <Loader />
       ) : (
         <div className='bg-whte h- w-full'>
@@ -112,8 +98,8 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-      {comparisonModal && <SelectOpponentFilterModal />}
-      <SelectYourOpponent />
+      {selectOpponentFilterModal && <SelectOpponentFilterModal />}
+      {showOpponentSelectionModal && <SelectYourOpponent />}
       <div className='pb-24' />
       {accessToken ? (
         <div className='fixed px-2 right-0 w-full bottom-0 bg-white/10 backdrop-blur-md border-b border-white/20 shadow-md py-2 flex justify-center items-center gap-2'>

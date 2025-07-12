@@ -108,3 +108,11 @@ export const updateLoggedInUserAPI = async (payload) => {
     throw error;
   }
 };
+export const fetchHeadToHeadStatsAPI = async (opponentId) => {
+  try {
+    const response = await api.post('/stats/head-to-head', { opponentId });
+    return response?.data;
+  } catch (error) {
+    throw error;
+  }
+};

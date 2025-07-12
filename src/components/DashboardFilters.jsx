@@ -1,17 +1,18 @@
 import { useAllUsers } from '@/store/useAllUsers';
 import { useDashboardStats } from '@/store/useDashboardStats';
-import { useToggleComparisonModal } from '@/store/useToggleComparisonModal';
 import CustomDatePicker from '@/components/common/CustomDatePicker';
 import PlayerImage from '@/components/matches/PlayerImage';
 import { RiExportFill } from 'react-icons/ri';
 import Loader from '@/components/common/Loader';
 import clsx from 'clsx';
+import { useSelectedOpponent } from '@/store/useSelectedOpponent';
+import { useSelectOpponentFilterModal } from '@/store/useSelectOpponentFilterModal';
 
 const DashboardFilters = ({ handleExport, isExporting }) => {
   const { allUsers } = useAllUsers();
 
-  const { selectedOpponent, toggleComparisonModal } =
-    useToggleComparisonModal();
+  const { toggleOpponentFilterSelectionModal } = useSelectOpponentFilterModal();
+  const { selectedOpponent } = useSelectedOpponent();
 
   const { statsDate, setStatsDate, dashboardStats } = useDashboardStats();
 
@@ -27,7 +28,7 @@ const DashboardFilters = ({ handleExport, isExporting }) => {
         </div>
 
         <button
-          onClick={toggleComparisonModal}
+          onClick={toggleOpponentFilterSelectionModal}
           className={clsx(
             '!bg-black/50 backdrop-blur-sm text-white border border-white/50 placeholder-black/70 rounded-xl text-center cursor-pointer flex justify-center gap-2 items-center',
             dashboardStats ? 'w-2/5' : 'w-1/2'

@@ -24,7 +24,6 @@ const PlayerComparisonSummary = ({ data, currentUser }) => {
       isWinner: false,
     },
   ];
-  console.log('testing players', players);
   // Winner name display logic
   const headline = isDraw
     ? `It was a draw on ${dayjs(statsDate).format('DD MMM, YYYY')}`
@@ -40,8 +39,8 @@ const PlayerComparisonSummary = ({ data, currentUser }) => {
           <div className='text-white/80'>
             {/* Desktop View */}
             <h3 className='text-xl mt-4 hidden md:block'>
-              {totalMatches} matches played —{' '}
-              {!isDraw && `${winner?.winPercentage}% win rate`}
+              {totalMatches} matches played
+              {!isDraw && ` — ${winner?.winPercentage}% win rate`}
             </h3>
 
             {/* Mobile View */}

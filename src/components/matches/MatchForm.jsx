@@ -2,14 +2,14 @@
 
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import GlassyModal from '../common/GlassyModal';
-import FloatingSelect from '../common/FloatingSelect';
-import CounterInput from '../common/CounterInput';
-import { useBattle } from '../../store/useBattle';
-import Button from '../common/Button';
-import { useNetworkRequest } from '../../hooks/useNetworkRequest';
-import Loader from '../common/Loader';
-import { addNewMatchAPI } from '../../lib/api';
+import GlassyModal from '@/components/common/GlassyModal';
+import FloatingSelect from '@/components/common/FloatingSelect';
+import CounterInput from '@/components/common/CounterInput';
+import { useBattle } from '@/store/useBattle';
+import Button from '@/components/common/Button';
+import { useNetworkRequest } from '@/hooks/useNetworkRequest';
+import Loader from '@/components/common/Loader';
+import { addNewMatchAPI } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 const MatchForm = ({ isOpen, toggleModal, fetchBattleMatches }) => {

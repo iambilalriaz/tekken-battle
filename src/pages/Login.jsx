@@ -79,9 +79,9 @@ const Login = () => {
           })}
         />{' '}
         <InputError errorMessage={errors?.password?.message} />
-        <button className='underline cursor-pointer text-secondary mt-4 text-end w-full text-sm md:text-base'>
+        {/* <button className='underline cursor-pointer text-secondary mt-4 text-end w-full text-sm md:text-base'>
           Forgot Password?
-        </button>
+        </button> */}
         <div className='my-4'>
           {loading ? (
             <Loader variant='secondary' />

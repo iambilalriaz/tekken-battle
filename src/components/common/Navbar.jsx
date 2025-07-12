@@ -11,6 +11,7 @@ import { useLogoutCustomer } from '@/hooks/useLogoutCustomer';
 const NAVBAR_LINKS = [
   { path: APP_ROUTES.DASHBOARD, label: 'Dashboard' },
   { path: APP_ROUTES.BATTLES.LIST, label: 'Battles' },
+  { path: APP_ROUTES.STATS, label: 'Statistics' },
   { path: APP_ROUTES.PROFILE, label: 'Profile' },
 ];
 

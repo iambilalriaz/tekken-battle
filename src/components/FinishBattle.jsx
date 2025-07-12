@@ -1,14 +1,14 @@
 import toast from 'react-hot-toast';
-import { useNetworkRequest } from '../hooks/useNetworkRequest';
-import { respondToBattleRequestAPI } from '../lib/api';
-import { useBattle } from '../store/useBattle';
+import { useNetworkRequest } from '@/hooks/useNetworkRequest';
+import { respondToBattleRequestAPI } from '@/lib/api';
+import { useBattle } from '@/store/useBattle';
 import BattleSummary from './BattleSummary';
 import Button from './common/Button';
 import GlassyModal from './common/GlassyModal';
 import Loader from './common/Loader';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { APP_ROUTES } from '../constants/app-routes';
+import { APP_ROUTES } from '@/constants/app-routes';
 
 const FinishBattle = () => {
   const { battle, finishBattleModal, toggleFinishBattleModal } = useBattle();

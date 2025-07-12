@@ -1,42 +1,23 @@
-import GlassyModal from '@/components/common/GlassyModal';
-import { useToggleComparisonModal } from '../store/useToggleComparisonModal';
-import { useAllUsers } from '../store/useAllUsers';
+import SelectOpponent from '@/components/SelectOpponent';
+import { useSelectedOpponent } from '@/store/useSelectedOpponent';
+import { useSelectOpponentFilterModal } from '@/store/useSelectOpponentFilterModal';
 
 const SelectOpponentFilterModal = () => {
-  const { comparisonModal, toggleComparisonModal, setSelectedOpponent } =
-    useToggleComparisonModal();
+  const { selectOpponentFilterModal, toggleOpponentFilterSelectionModal } =
+    useSelectOpponentFilterModal();
 
-  const { allUsers } = useAllUsers();
+  const { setSelectedOpponent } = useSelectedOpponent();
 
   const onOpponentSelection = (id) => {
     setSelectedOpponent(id);
-    toggleComparisonModal();
+    toggleOpponentFilterSelectionModal();
   };
   return (
-    <GlassyModal
-      isOpen={comparisonModal}
-      onClose={toggleComparisonModal}
-      title='Select Opponent'
-    >
-      {allUsers?.length ? (
-        allUsers?.map((user) => (
-          <div
-            key={user?.userId}
-            className='flex items-center hover:bg-gray/20 active:bg-gray/20 cursor-pointer p-2 select-none animate__animated animate__rollIn'
-            onClick={() => onOpponentSelection(user?.userId)}
-          >
-            <div className='w-10 h-10 rounded-full overflow-hidden border-4 border-white'>
-              <img src={user?.profileImage} width={50} height={50} />
-            </div>
-            <p className='font-semibold ml-3'>{user?.name}</p>
-          </div>
-        ))
-      ) : (
-        <p className='flex justify-center items-center max-w-sm text-center mx-auto'>
-          Looks like you don’t have any opponents yet.
-        </p>
-      )}
-    </GlassyModal>
+    <SelectOpponent
+      onSelectOpponent={onOpponentSelection}
+      showModal={selectOpponentFilterModal}
+      toggleModal={toggleOpponentFilterSelectionModal}
+    />
   );
 };
 
