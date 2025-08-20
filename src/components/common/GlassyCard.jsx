@@ -7,7 +7,7 @@ const GlassyCard = ({ title, children, styles = '', cardStyles = '' }) => {
     <div className={clsx('p-4', '', styles)}>
       <div
         className={clsx(
-          'glass w-full p-6 rounded-2xl shadow-lg border border-white/20 backdrop-blur-md',
+          'glass w-full px-3 py-6 rounded-2xl shadow-lg border border-white/20 backdrop-blur-md',
           cardStyles
         )}
       >

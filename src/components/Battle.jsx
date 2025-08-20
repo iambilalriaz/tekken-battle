@@ -110,7 +110,7 @@ const Battle = ({ battle, closeModal = () => {} }) => {
     profileImageUrl: acceptor?.profileImage,
   };
   return (
-    <div className='border border-white p-4 my-4 animate__animated animate__fadeIn'>
+    <div className='border border-white p-4 my-4 animate__animated animate__faster animate__fadeIn'>
       <div className='flex justify-end'>
         <RequestStatus status={status} />
       </div>

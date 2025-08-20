@@ -105,7 +105,7 @@ const MainLayout = ({ children }) => {
   return (
     <main className='grid place-items-center h-screen mx-4'>
       <Navbar />
-      <div className='w-full grid place-items-center max-h-full overflow-auto py-16'>
+      <div className='w-full grid place-items-center max-h-full overflow-auto '>
         {children}
       </div>
       <PendingRequests

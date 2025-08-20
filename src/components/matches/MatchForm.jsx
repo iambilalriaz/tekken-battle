@@ -3,7 +3,6 @@
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import GlassyModal from '@/components/common/GlassyModal';
-import FloatingSelect from '@/components/common/FloatingSelect';
 import CounterInput from '@/components/common/CounterInput';
 import { useBattle } from '@/store/useBattle';
 import Button from '@/components/common/Button';
@@ -11,6 +10,7 @@ import { useNetworkRequest } from '@/hooks/useNetworkRequest';
 import Loader from '@/components/common/Loader';
 import { addNewMatchAPI } from '@/lib/api';
 import toast from 'react-hot-toast';
+import FloatingRadio from '@/components/common/FloadingRadio';
 
 const MatchForm = ({ isOpen, toggleModal, fetchBattleMatches }) => {
   const { battle } = useBattle();
@@ -102,20 +102,27 @@ const MatchForm = ({ isOpen, toggleModal, fetchBattleMatches }) => {
 
   return (
     <GlassyModal isOpen={isOpen} onClose={toggleModal} title='Add Match'>
-      <div className='animate__animated animate__lightSpeedInLeft'>
-        <FloatingSelect
+      <div className='animate__animated animate__zoomInDown animate__faster'>
+        <Controller
           name='winner'
-          label='Match Winner'
-          options={[
-            { label: requester?.name, value: requester?.id },
-            { label: acceptor?.name, value: acceptor?.id },
-          ]}
-          {...register('winner', { required: 'Winner is required' })}
+          control={control}
+          rules={{ required: 'Winner is required' }}
+          render={({ field }) => (
+            <FloatingRadio
+              {...field}
+              label='Match Winner'
+              options={[
+                { label: requester?.name, value: requester?.id },
+                { label: acceptor?.name, value: acceptor?.id },
+              ]}
+              classes='my-4'
+            />
+          )}
         />
         {errors.winner && (
           <p className='text-sm text-error'>{errors.winner.message}</p>
         )}
-
+        <hr />
         <Controller
           name='player1Perfects'
           control={control}
@@ -123,13 +130,14 @@ const MatchForm = ({ isOpen, toggleModal, fetchBattleMatches }) => {
           render={({ field }) => (
             <CounterInput
               {...field}
-              label={`${requester?.name} Perfect Rounds`}
+              label={`${requester?.name} Perfects`}
               classes='my-4'
               min={0}
               max={3 - player2Perfects}
             />
           )}
-        />
+        />{' '}
+        <hr />
         <Controller
           name='player2Perfects'
           control={control}
@@ -137,18 +145,17 @@ const MatchForm = ({ isOpen, toggleModal, fetchBattleMatches }) => {
           render={({ field }) => (
             <CounterInput
               {...field}
-              label={`${acceptor?.name} Perfect Rounds`}
+              label={`${acceptor?.name} Perfects`}
               min={0}
               max={3 - player1Perfects}
               classes='my-4'
             />
           )}
         />
-
+        <hr />
         {errors.player2Perfects && (
           <p className='text-sm text-error'>{errors.player2Perfects.message}</p>
         )}
-
         <div className='flex items-center gap-2'>
           <input
             id='cleanSweep'

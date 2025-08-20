@@ -22,10 +22,10 @@ const MatchRecord = ({ match }) => {
 
   return (
     <GlassyCard
-      styles='animate__animated animate__rollIn'
+      styles='!p-0 animate__animated animate__rollIn animate__faster mb-4'
       cardStyles='bg-black/40'
     >
-      <div className='flex items-center flex-row max-[380px]:flex-col justify-between gap-2 md:gap-6 w-full '>
+      <div className='flex items-center justify-between gap-2 md:gap-6 w-full '>
         <PlayerCard player={leftPlayer} perfects={leftPerfects} isWinner />
         <p className='bg-black/30 text-white text-xs md:text-sm text-center px-3 py-1 rounded-full font-bold'>
           Match Result

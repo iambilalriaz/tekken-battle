@@ -25,7 +25,7 @@ const CounterInput = ({
 
   return (
     <div className={`flex flex-col gap-1 ${classes}`}>
-      <label htmlFor={name} className='text-sm font-medium text-white mb-2'>
+      <label htmlFor={name} className='font-semibold text-white mb-2'>
         {label}
       </label>
       <div className='flex items-center gap-2'>

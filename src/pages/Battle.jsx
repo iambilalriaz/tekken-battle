@@ -15,6 +15,8 @@ import GlassyCard from '@/components/common/GlassyCard';
 import FinishBattle from '@/components/FinishBattle';
 import toast from 'react-hot-toast';
 import { APP_ROUTES } from '@/constants/app-routes';
+import Tabs from '@/components/common/Tabs';
+import SummaryView from '@/components/matches/SummaryView';
 
 const Battle = () => {
   const params = useParams();
@@ -67,6 +69,23 @@ const Battle = () => {
       }, 1000);
     }
   }, [fetchingBattleError]);
+
+  const tabData = [
+    {
+      label: 'Summary',
+      content: <SummaryView matches={matches} />,
+    },
+    {
+      label: 'List',
+      content: (
+        <>
+          {matches?.map((match) => (
+            <MatchRecord key={match?._id} match={match} />
+          ))}
+        </>
+      ),
+    },
+  ];
   return (
     <MainLayout>
       {fetchingBattle || fetchingBattleMatches ? (
@@ -79,10 +98,8 @@ const Battle = () => {
         </GlassyCard>
       ) : (
         <>
-          <div className='rounded-4xl w-full max-w-lg pb-20'>
-            {matches?.map((match) => (
-              <MatchRecord key={match?._id} match={match} />
-            ))}
+          <div className='max-w-2xl mx-auto py-4'>
+            <Tabs tabs={tabData} defaultActive={0} />
           </div>
         </>
       )}
