@@ -20,14 +20,12 @@ import SelectYourOpponent from '@/components/SelectYourOpponent';
 import { useExportImage } from '@/hooks/useExportImage';
 import { getAccessToken } from '@/lib/helpers';
 import { useSelectedOpponent } from '@/store/useSelectedOpponent';
-import { useSelectOpponentFilterModal } from '@/store/useSelectOpponentFilterModal';
 
 const Dashboard = () => {
   const { loggedInUser } = useLoggedInUser();
   const accessToken = getAccessToken();
   const { showOpponentSelectionModal, toggleOpponentSelectionModal } =
     useSelectOpponentModal();
-  const { selectOpponentFilterModal } = useSelectOpponentFilterModal();
 
   const { selectedOpponent } = useSelectedOpponent();
   const { statsDate, setDashboardStats } = useDashboardStats();
@@ -65,11 +63,11 @@ const Dashboard = () => {
   }, [statsDate, selectedOpponent]);
 
   return (
-    <MainLayout>
+    <MainLayout isDashboard>
       {fetchingStats ? (
         <Loader />
       ) : (
-        <div className='bg-whte h- w-full'>
+        <div className='bg-whte mt-16 w-full'>
           <DashboardFilters
             handleExport={handleExport}
             isExporting={isExporting}
@@ -98,8 +96,6 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-      {selectOpponentFilterModal && <SelectOpponentFilterModal />}
-      {showOpponentSelectionModal && <SelectYourOpponent />}
       <div className='pb-24' />
       {accessToken ? (
         <div className='fixed px-2 right-0 w-full bottom-0 bg-white/10 backdrop-blur-md border-b border-white/20 shadow-md py-2 flex justify-center items-center gap-2'>
@@ -117,6 +113,9 @@ const Dashboard = () => {
         width: 100%;
       }
       `}</style>
+
+      <SelectOpponentFilterModal />
+      <SelectYourOpponent />
     </MainLayout>
   );
 };

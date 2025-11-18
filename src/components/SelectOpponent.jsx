@@ -3,7 +3,7 @@ import { useAllUsers } from '@/store/useAllUsers';
 import Loader from '@/components/common/Loader';
 import { useCallback, useEffect } from 'react';
 import { useNetworkRequest } from '@/hooks/useNetworkRequest';
-import GlassyModal from './common/GlassyModal';
+import GlassyModal from '@/components/common/GlassyModal';
 
 const SelectOpponent = ({
   loaderComponent = null,
@@ -16,14 +16,17 @@ const SelectOpponent = ({
 
   const { loading: fetchingUsers, executeFunction: fetchAllUsers } =
     useNetworkRequest({ apiFunction: fetchAllUsersAPI, initialLoader });
+
   const fetchUsers = useCallback(async () => {
     const users = await fetchAllUsers();
     setAllUsers(users);
   }, []);
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (showModal) {
+      fetchUsers();
+    }
+  }, [showModal]);
 
   return (
     <GlassyModal
@@ -41,7 +44,7 @@ const SelectOpponent = ({
         allUsers?.map((user) => (
           <div
             key={user?.userId}
-            className='flex items-center hover:bg-gray/20 active:bg-gray/20 cursor-pointer p-2 select-none animate__animated animate__rollIn animate__faster'
+            className='flex items-center hover:bg-gray/20 active:bg-gray/20 cursor-pointer p-2 select-none animate__animated animate__lightSpeedInLeft animate__faster'
             onClick={() => onSelectOpponent(user?.userId)}
           >
             <div className='w-10 h-10 rounded-full overflow-hidden border-4 border-white'>

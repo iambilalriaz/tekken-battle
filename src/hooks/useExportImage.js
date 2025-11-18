@@ -1,5 +1,5 @@
 'ue client';
-import { toPng } from 'html-to-image';
+import html2canvas from 'html2canvas';
 import { useRef, useState } from 'react';
 export const useExportImage = ({ imageName = 'exported-image' }) => {
   const componentRef = useRef();
@@ -7,19 +7,20 @@ export const useExportImage = ({ imageName = 'exported-image' }) => {
 
   const handleExport = async () => {
     if (!componentRef.current) return;
+
     setIsExporing(true);
     try {
-      const dataUrl = await toPng(componentRef.current, {
-        cacheBust: false, // disable if not needed
-        style: {
-          paddingBlock: '1.5rem',
-          backgroundColor: 'black',
-        },
+      const canvas = await html2canvas(componentRef.current, {
+        useCORS: true,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: componentRef?.current?.scrollWidth,
+        windowHeight: componentRef?.current?.scrollHeight,
+        backgroundColor: 'black',
       });
-
       const link = document.createElement('a');
       link.download = `${imageName}.png`;
-      link.href = dataUrl;
+      link.href = canvas.toDataURL();
       link.click();
     } catch (err) {
       console.error('Failed to export image', err);
@@ -27,6 +28,7 @@ export const useExportImage = ({ imageName = 'exported-image' }) => {
       setIsExporing(false);
     }
   };
+
   return {
     componentRef,
     handleExport,

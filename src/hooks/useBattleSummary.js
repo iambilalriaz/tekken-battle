@@ -3,12 +3,12 @@ import { useBattleMatches } from '@/store/useBattleMatches';
 export const useBattleSummary = () => {
   const { battleMatches } = useBattleMatches();
 
-  const player1 = battleMatches?.[0].player1;
-  const player2 = battleMatches?.[0].player2;
+  const player1 = battleMatches?.[0]?.player1;
+  const player2 = battleMatches?.[0]?.player2;
 
   const summary = {
-    [player1._id]: { wins: 0, perfects: 0, cleanSweeps: 0, player: player1 },
-    [player2._id]: { wins: 0, perfects: 0, cleanSweeps: 0, player: player2 },
+    [player1?._id]: { wins: 0, perfects: 0, cleanSweeps: 0, player: player1 },
+    [player2?._id]: { wins: 0, perfects: 0, cleanSweeps: 0, player: player2 },
   };
   battleMatches?.forEach((match) => {
     summary[match.winner].wins += 1;

@@ -19,7 +19,7 @@ export async function GET(req) {
 
   let user;
   try {
-    user = jwt.verify(token, JWT_SECRET);
+    user = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
   } catch (err) {
     return NextResponse.json(
       { success: false, data: null, error: 'Invalid or expired token' },
@@ -39,13 +39,13 @@ export async function GET(req) {
 
   try {
     const users = await User.find({ _id: { $ne: userId } })
-      .select('firstName lastName email profileImageUrl')
-      .sort({ createdAt: -1 });
+      .select('firstName profileImageUrl')
+      .sort({ createdAt: -1 })
+      .lean();
 
     const formattedUsers = users.map((user) => ({
-      userId: user._id.toString(), // manual rename
-      name: `${user.firstName} ${user.lastName}`, // manual combine
-      email: user.email,
+      userId: user._id,
+      name: user.firstName,
       profileImage: user.profileImageUrl,
     }));
     return NextResponse.json(

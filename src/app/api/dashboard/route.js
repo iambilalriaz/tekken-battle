@@ -102,11 +102,11 @@ export async function POST(req) {
         opponent?.id?.toString() || opponent?._id?.toString();
 
       if (!thisOpponentId || thisOpponentId !== opponentId) continue;
-
+      const opponentUser = await User.findById(thisOpponentId);
       if (!opponentInfo) {
         opponentInfo = {
           name: opponent?.name || '',
-          profileImage: opponent?.profileImage || '',
+          profileImage: opponentUser?.profileImageUrl || '',
         };
       }
 

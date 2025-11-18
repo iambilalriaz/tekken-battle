@@ -14,7 +14,7 @@ import { useNetworkRequest } from '@/hooks/useNetworkRequest';
 import { getAccessToken } from '@/lib/helpers';
 import { useLogoutCustomer } from '@/hooks/useLogoutCustomer';
 
-const MainLayout = ({ children }) => {
+const MainLayout = ({ children, isDashboard = false }) => {
   const { loggedInUser } = useLoggedInUser();
   const { logoutCustomer } = useLogoutCustomer();
 
@@ -37,6 +37,22 @@ const MainLayout = ({ children }) => {
     audio.play();
   };
 
+  const fetchPendingBattleRequests = async () => {
+    const data = await fetchYourBattleRequests(BATTLE_STATUSES.REQUESTED);
+    if (data?.length > 0) {
+      setInvited(true);
+      playNotification();
+      setPendingInvites(data);
+      setBattleRequests(data);
+    }
+  };
+
+  useEffect(() => {
+    if (isDashboard && accessToken) {
+      fetchPendingBattleRequests();
+    }
+  }, [isDashboard, accessToken]);
+
   useEffect(() => {
     if (accessToken) {
       const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
@@ -50,13 +66,7 @@ const MainLayout = ({ children }) => {
       });
 
       const channel = pusher.subscribe(`private-user-${loggedInUser?.id}`);
-      channel.bind('battle-request-received', async () => {
-        setInvited(true);
-        playNotification();
-        const data = await fetchYourBattleRequests(BATTLE_STATUSES.REQUESTED);
-        setPendingInvites(data);
-        setBattleRequests(data);
-      });
+      channel.bind('battle-request-received', fetchPendingBattleRequests);
       channel.bind('battle-request-updated', async (response) => {
         const data = await fetchYourBattleRequests(BATTLE_STATUSES.REQUESTED);
         setPendingInvites(data);
