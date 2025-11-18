@@ -67,7 +67,7 @@ const Dashboard = () => {
       {fetchingStats ? (
         <Loader />
       ) : (
-        <div className='bg-whte mt-16 w-full'>
+        <div className='bg-whte my-16 w-full'>
           <DashboardFilters
             handleExport={handleExport}
             isExporting={isExporting}
