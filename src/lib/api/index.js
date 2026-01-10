@@ -116,3 +116,11 @@ export const fetchHeadToHeadStatsAPI = async (opponentId) => {
     throw error;
   }
 };
+export const getMostConsecutiveWinsRecord = async () => {
+  try {
+    const response = await api.get('/records/most-consecutive-wins');
+    return response?.data;
+  } catch (error) {
+    throw error;
+  }
+};

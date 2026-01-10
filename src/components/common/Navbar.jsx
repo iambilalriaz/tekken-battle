@@ -12,6 +12,7 @@ const NAVBAR_LINKS = [
   { path: APP_ROUTES.DASHBOARD, label: 'Dashboard' },
   { path: APP_ROUTES.BATTLES.LIST, label: 'Battles' },
   { path: APP_ROUTES.STATS, label: 'Statistics' },
+  { path: APP_ROUTES.RECORDS.MAIN, label: 'Records' },
   { path: APP_ROUTES.PROFILE, label: 'Profile' },
 ];
 
@@ -52,6 +53,8 @@ const Navbar = () => {
     (page) => page === pathname
   );
 
+  const isNewItem = (path) => [APP_ROUTES.RECORDS.MAIN].includes(path);
+
   return (
     <nav className='fixed w-full top-0 left-0 z-50 bg-white/10 backdrop-blur-md border-b border-white/20 shadow-md px-6 py-3'>
       <div className='flex justify-between items-center'>
@@ -81,7 +84,12 @@ const Navbar = () => {
                     onClick={() => setIsOpen(false)}
                     className='block w-full px-2 py-1 rounded hover:bg-gray-100'
                   >
-                    {label}
+                    {label}{' '}
+                    {isNewItem(path) ? (
+                      <span className='bg-dodger-blue text-white rounded-4xl px-2 py-0.5 text-xs font-semibold'>
+                        New
+                      </span>
+                    ) : null}
                   </Link>
                 </li>
               ))}

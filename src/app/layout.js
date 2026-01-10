@@ -12,8 +12,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang='en'>
-      <body className={`${inter.className} antialiased relative`}>
+    <html lang='en' suppressHydrationWarning>
+      <body className={`${inter.className} antialiased relative`} suppressHydrationWarning>
         <div
           className='fixed inset-0 h-screen w-screen bg-cover bg-center'
           style={{ backgroundImage: "url('/tekken.png')" }}
