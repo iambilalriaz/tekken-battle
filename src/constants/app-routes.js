@@ -8,4 +8,8 @@ export const APP_ROUTES = {
     LIST: '/battles',
     RECORD: '/battles/:battleId',
   },
+  RECORDS: {
+    MAIN: '/records',
+    MOST_CONSECUTIVE_WINS: '/records/most-consecutive-wins',
+  },
 };
